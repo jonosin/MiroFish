@@ -1,35 +1,35 @@
 <template>
   <div class="home-container">
-    <!-- 顶部导航栏 -->
+    <!-- Top Navigation Bar -->
     <nav class="navbar">
       <div class="nav-brand">MIROFISH</div>
       <div class="nav-links">
         <a href="https://github.com/666ghj/MiroFish" target="_blank" class="github-link">
-          访问我们的Github主页 <span class="arrow">↗</span>
+          GitHub <span class="arrow">↗</span>
         </a>
       </div>
     </nav>
 
     <div class="main-content">
-      <!-- 上半部分：Hero 区域 -->
+      <!-- Top: Hero Section -->
       <section class="hero-section">
         <div class="hero-left">
           <div class="tag-row">
-            <span class="orange-tag">简洁通用的群体智能引擎</span>
-            <span class="version-text">/ v0.1-预览版</span>
+            <span class="orange-tag">Collective Intelligence Engine</span>
+            <span class="version-text">/ v0.1-preview</span>
           </div>
           
           <h1 class="main-title">
-            上传任意报告<br>
-            <span class="gradient-text">即刻推演未来</span>
+            Upload Any Report<br>
+            <span class="gradient-text">Simulate the Future</span>
           </h1>
           
           <div class="hero-desc">
             <p>
-              即使只有一段文字，<span class="highlight-bold">MiroFish</span> 也能基于其中的现实种子，全自动生成与之对应的至多<span class="highlight-orange">百万级Agent</span>构成的平行世界。通过上帝视角注入变量，在复杂的群体交互中寻找动态环境下的<span class="highlight-code">“局部最优解”</span>
+              Even with just a paragraph of text, <span class=”highlight-bold”>MiroFish</span> automatically generates up to <span class=”highlight-orange”>millions of Agents</span> forming a parallel world. Inject variables from a god's-eye view and find the <span class=”highlight-code”>”local optimum”</span> in complex group interactions.
             </p>
-            <p class="slogan-text">
-              让未来在 Agent 群中预演，让决策在百战后胜出<span class="blinking-cursor">_</span>
+            <p class=”slogan-text”>
+              Let the future unfold among Agents. Let decisions emerge from a thousand simulations.<span class=”blinking-cursor”>_</span>
             </p>
           </div>
            
@@ -37,7 +37,7 @@
         </div>
         
         <div class="hero-right">
-          <!-- Logo 区域 -->
+          <!-- Logo Area -->
           <div class="logo-container">
             <img src="../assets/logo/MiroFish_logo_left.jpeg" alt="MiroFish Logo" class="hero-logo" />
           </div>
@@ -48,84 +48,84 @@
         </div>
       </section>
 
-      <!-- 下半部分：双栏布局 -->
+      <!-- Bottom: Two-Column Layout -->
       <section class="dashboard-section">
-        <!-- 左栏：状态与步骤 -->
+        <!-- Left Column: Status & Steps -->
         <div class="left-panel">
           <div class="panel-header">
-            <span class="status-dot">■</span> 系统状态
+            <span class="status-dot">■</span> SYSTEM STATUS
           </div>
-          
-          <h2 class="section-title">准备就绪</h2>
+
+          <h2 class="section-title">Ready</h2>
           <p class="section-desc">
-            预测引擎待命中，可上传多份非结构化数据以初始化模拟序列
+            Prediction engine on standby. Upload unstructured data to initialize the simulation sequence.
           </p>
           
-          <!-- 数据指标卡片 -->
+          <!-- Metric Cards -->
           <div class="metrics-row">
             <div class="metric-card">
-              <div class="metric-value">低成本</div>
-              <div class="metric-label">常规模拟平均5$/次</div>
+              <div class="metric-value">Low Cost</div>
+              <div class="metric-label">Avg $5 / simulation</div>
             </div>
             <div class="metric-card">
-              <div class="metric-value">高可用</div>
-              <div class="metric-label">最多百万级Agent模拟</div>
+              <div class="metric-value">High Capacity</div>
+              <div class="metric-label">Up to millions of agents</div>
             </div>
           </div>
 
-          <!-- 项目模拟步骤介绍 (新增区域) -->
+          <!-- Simulation Workflow Steps -->
           <div class="steps-container">
             <div class="steps-header">
-               <span class="diamond-icon">◇</span> 工作流序列
+               <span class="diamond-icon">◇</span> WORKFLOW
             </div>
             <div class="workflow-list">
               <div class="workflow-item">
                 <span class="step-num">01</span>
                 <div class="step-info">
-                  <div class="step-title">图谱构建</div>
-                  <div class="step-desc">现实种子提取 & 个体与群体记忆注入 & GraphRAG构建</div>
+                  <div class="step-title">Graph Build</div>
+                  <div class="step-desc">Reality seed extraction & memory injection & GraphRAG build</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">02</span>
                 <div class="step-info">
-                  <div class="step-title">环境搭建</div>
-                  <div class="step-desc">实体关系抽取 & 人设生成 & 环境配置Agent注入仿真参数</div>
+                  <div class="step-title">Env Setup</div>
+                  <div class="step-desc">Entity extraction & persona generation & agent simulation config</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">03</span>
                 <div class="step-info">
-                  <div class="step-title">开始模拟</div>
-                  <div class="step-desc">双平台并行模拟 & 自动解析预测需求 & 动态更新时序记忆</div>
+                  <div class="step-title">Simulate</div>
+                  <div class="step-desc">Dual-platform simulation & auto-parse prediction needs & temporal memory update</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">04</span>
                 <div class="step-info">
-                  <div class="step-title">报告生成</div>
-                  <div class="step-desc">ReportAgent拥有丰富的工具集与模拟后环境进行深度交互</div>
+                  <div class="step-title">Report</div>
+                  <div class="step-desc">ReportAgent uses a rich toolset to deeply interact with the post-simulation environment</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">05</span>
                 <div class="step-info">
-                  <div class="step-title">深度互动</div>
-                  <div class="step-desc">与模拟世界中的任意一位进行对话 & 与ReportAgent进行对话</div>
+                  <div class="step-title">Deep Interact</div>
+                  <div class="step-desc">Chat with any agent in the simulated world & chat with ReportAgent</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 右栏：交互控制台 -->
+        <!-- Right Column: Interactive Console -->
         <div class="right-panel">
           <div class="console-box">
-            <!-- 上传区域 -->
+            <!-- Upload Area -->
             <div class="console-section">
               <div class="console-header">
-                <span class="console-label">01 / 现实种子</span>
-                <span class="console-meta">支持格式: PDF, MD, TXT</span>
+                <span class="console-label">01 / Reality Seed</span>
+                <span class="console-meta">Supported: PDF, MD, TXT</span>
               </div>
               
               <div 
@@ -148,8 +148,8 @@
                 
                 <div v-if="files.length === 0" class="upload-placeholder">
                   <div class="upload-icon">↑</div>
-                  <div class="upload-title">拖拽文件上传</div>
-                  <div class="upload-hint">或点击浏览文件系统</div>
+                  <div class="upload-title">Drop files here</div>
+                  <div class="upload-hint">or click to browse</div>
                 </div>
                 
                 <div v-else class="file-list">
@@ -162,37 +162,37 @@
               </div>
             </div>
 
-            <!-- 分割线 -->
+            <!-- Divider -->
             <div class="console-divider">
-              <span>输入参数</span>
+              <span>Parameters</span>
             </div>
 
-            <!-- 输入区域 -->
+            <!-- Input Area -->
             <div class="console-section">
               <div class="console-header">
-                <span class="console-label">>_ 02 / 模拟提示词</span>
+                <span class="console-label">>_ 02 / Simulation Prompt</span>
               </div>
               <div class="input-wrapper">
                 <textarea
                   v-model="formData.simulationRequirement"
                   class="code-input"
-                  placeholder="// 用自然语言输入模拟或预测需求（例.武大若发布撤销肖某处分的公告，会引发什么舆情走向）"
+                  placeholder="// Describe your simulation in natural language (e.g. If university X announces policy Y, what public sentiment would follow?)"
                   rows="6"
                   :disabled="loading"
                 ></textarea>
-                <div class="model-badge">引擎: MiroFish-V1.0</div>
+                <div class="model-badge">Engine: MiroFish-V1.0</div>
               </div>
             </div>
 
-            <!-- 启动按钮 -->
+            <!-- Launch Button -->
             <div class="console-section btn-section">
-              <button 
+              <button
                 class="start-engine-btn"
                 @click="startSimulation"
                 :disabled="!canSubmit || loading"
               >
-                <span v-if="!loading">启动引擎</span>
-                <span v-else>初始化中...</span>
+                <span v-if="!loading">Launch Engine</span>
+                <span v-else>Initializing...</span>
                 <span class="btn-arrow">→</span>
               </button>
             </div>
@@ -200,7 +200,7 @@
         </div>
       </section>
 
-      <!-- 历史项目数据库 -->
+      <!-- History Database -->
       <HistoryDatabase />
     </div>
   </div>
@@ -213,41 +213,41 @@ import HistoryDatabase from '../components/HistoryDatabase.vue'
 
 const router = useRouter()
 
-// 表单数据
+// Form data
 const formData = ref({
   simulationRequirement: ''
 })
 
-// 文件列表
+// File list
 const files = ref([])
 
-// 状态
+// State
 const loading = ref(false)
 const error = ref('')
 const isDragOver = ref(false)
 
-// 文件输入引用
+// File input ref
 const fileInput = ref(null)
 
-// 计算属性:是否可以提交
+// Computed: can submit
 const canSubmit = computed(() => {
   return formData.value.simulationRequirement.trim() !== '' && files.value.length > 0
 })
 
-// 触发文件选择
+// Trigger file picker
 const triggerFileInput = () => {
   if (!loading.value) {
     fileInput.value?.click()
   }
 }
 
-// 处理文件选择
+// Handle file selection
 const handleFileSelect = (event) => {
   const selectedFiles = Array.from(event.target.files)
   addFiles(selectedFiles)
 }
 
-// 处理拖拽相关
+// Handle drag events
 const handleDragOver = (e) => {
   if (!loading.value) {
     isDragOver.value = true
@@ -261,12 +261,12 @@ const handleDragLeave = (e) => {
 const handleDrop = (e) => {
   isDragOver.value = false
   if (loading.value) return
-  
+
   const droppedFiles = Array.from(e.dataTransfer.files)
   addFiles(droppedFiles)
 }
 
-// 添加文件
+// Add files
 const addFiles = (newFiles) => {
   const validFiles = newFiles.filter(file => {
     const ext = file.name.split('.').pop().toLowerCase()
@@ -275,12 +275,12 @@ const addFiles = (newFiles) => {
   files.value.push(...validFiles)
 }
 
-// 移除文件
+// Remove file
 const removeFile = (index) => {
   files.value.splice(index, 1)
 }
 
-// 滚动到底部
+// Scroll to bottom
 const scrollToBottom = () => {
   window.scrollTo({
     top: document.body.scrollHeight,
@@ -288,15 +288,15 @@ const scrollToBottom = () => {
   })
 }
 
-// 开始模拟 - 立即跳转，API调用在Process页面进行
+// Start simulation — navigate immediately; API call happens on Process page
 const startSimulation = () => {
   if (!canSubmit.value || loading.value) return
-  
-  // 存储待上传的数据
+
+  // Store pending upload data
   import('../store/pendingUpload.js').then(({ setPendingUpload }) => {
     setPendingUpload(files.value, formData.value.simulationRequirement)
-    
-    // 立即跳转到Process页面（使用特殊标识表示新建项目）
+
+    // Navigate to Process page immediately (special marker for new project)
     router.push({
       name: 'Process',
       params: { projectId: 'new' }
@@ -306,39 +306,23 @@ const startSimulation = () => {
 </script>
 
 <style scoped>
-/* 全局变量与重置 */
-:root {
-  --black: #000000;
-  --white: #FFFFFF;
-  --orange: #FF4500;
-  --gray-light: #F5F5F5;
-  --gray-text: #666666;
-  --border: #E5E5E5;
-  /* 
-    使用 Space Grotesk 作为主要标题字体，JetBrains Mono 作为代码/标签字体
-    确保已在 index.html 引入这些 Google Fonts 
-  */
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-sans: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
-  --font-cn: 'Noto Sans SC', system-ui, sans-serif;
-}
-
 .home-container {
   min-height: 100vh;
-  background: var(--white);
+  background: var(--bg-base);
   font-family: var(--font-sans);
-  color: var(--black);
+  color: var(--text-primary);
 }
 
-/* 顶部导航 */
+/* Top Nav */
 .navbar {
   height: 60px;
-  background: var(--black);
-  color: var(--white);
+  background: var(--bg-surface);
+  color: var(--text-primary);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 40px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .nav-brand {
@@ -346,6 +330,7 @@ const startSimulation = () => {
   font-weight: 800;
   letter-spacing: 1px;
   font-size: 1.2rem;
+  color: var(--accent);
 }
 
 .nav-links {
@@ -354,7 +339,7 @@ const startSimulation = () => {
 }
 
 .github-link {
-  color: var(--white);
+  color: var(--text-primary);
   text-decoration: none;
   font-family: var(--font-mono);
   font-size: 0.9rem;
@@ -373,14 +358,14 @@ const startSimulation = () => {
   font-family: sans-serif;
 }
 
-/* 主要内容区 */
+/* Main Content */
 .main-content {
   max-width: 1400px;
   margin: 0 auto;
   padding: 60px 40px;
 }
 
-/* Hero 区域 */
+/* Hero Section */
 .hero-section {
   display: flex;
   justify-content: space-between;
@@ -403,8 +388,8 @@ const startSimulation = () => {
 }
 
 .orange-tag {
-  background: var(--orange);
-  color: var(--white);
+  background: var(--accent);
+  color: var(--text-primary);
   padding: 4px 10px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -412,7 +397,7 @@ const startSimulation = () => {
 }
 
 .version-text {
-  color: #999;
+  color: var(--text-muted);
   font-weight: 500;
   letter-spacing: 0.5px;
 }
@@ -423,11 +408,11 @@ const startSimulation = () => {
   font-weight: 500;
   margin: 0 0 40px 0;
   letter-spacing: -2px;
-  color: var(--black);
+  color: var(--text-primary);
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #000000 0%, #444444 100%);
+  background: linear-gradient(90deg, #000000 0%, var(--accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
@@ -436,7 +421,7 @@ const startSimulation = () => {
 .hero-desc {
   font-size: 1.05rem;
   line-height: 1.8;
-  color: var(--gray-text);
+  color: var(--text-secondary);
   max-width: 640px;
   margin-bottom: 50px;
   font-weight: 400;
@@ -448,38 +433,38 @@ const startSimulation = () => {
 }
 
 .highlight-bold {
-  color: var(--black);
+  color: var(--text-primary);
   font-weight: 700;
 }
 
 .highlight-orange {
-  color: var(--orange);
+  color: var(--accent);
   font-weight: 700;
   font-family: var(--font-mono);
 }
 
 .highlight-code {
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--accent-glow);
   padding: 2px 6px;
   border-radius: 2px;
   font-family: var(--font-mono);
   font-size: 0.9em;
-  color: var(--black);
+  color: var(--accent);
   font-weight: 600;
 }
 
 .slogan-text {
   font-size: 1.2rem;
   font-weight: 520;
-  color: var(--black);
+  color: var(--text-primary);
   letter-spacing: 1px;
-  border-left: 3px solid var(--orange);
+  border-left: 3px solid var(--accent);
   padding-left: 15px;
   margin-top: 20px;
 }
 
 .blinking-cursor {
-  color: var(--orange);
+  color: var(--accent);
   animation: blink 1s step-end infinite;
   font-weight: 700;
 }
@@ -492,7 +477,7 @@ const startSimulation = () => {
 .decoration-square {
   width: 16px;
   height: 16px;
-  background: var(--orange);
+  background: var(--accent);
 }
 
 .hero-right {
@@ -511,33 +496,33 @@ const startSimulation = () => {
 }
 
 .hero-logo {
-  max-width: 500px; /* 调整logo大小 */
+  max-width: 500px;
   width: 100%;
 }
 
 .scroll-down-btn {
   width: 40px;
   height: 40px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-default);
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--orange);
+  color: var(--accent);
   font-size: 1.2rem;
   transition: all 0.2s;
 }
 
 .scroll-down-btn:hover {
-  border-color: var(--orange);
+  border-color: var(--accent);
 }
 
-/* Dashboard 双栏布局 */
+/* Dashboard Layout */
 .dashboard-section {
   display: flex;
   gap: 60px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--border-default);
   padding-top: 60px;
   align-items: flex-start;
 }
@@ -548,7 +533,7 @@ const startSimulation = () => {
   flex-direction: column;
 }
 
-/* 左侧面板 */
+/* Left Panel */
 .left-panel {
   flex: 0.8;
 }
@@ -556,7 +541,7 @@ const startSimulation = () => {
 .panel-header {
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  color: #999;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -564,7 +549,7 @@ const startSimulation = () => {
 }
 
 .status-dot {
-  color: var(--orange);
+  color: var(--accent);
   font-size: 0.8rem;
 }
 
@@ -572,10 +557,11 @@ const startSimulation = () => {
   font-size: 2rem;
   font-weight: 520;
   margin: 0 0 15px 0;
+  color: var(--text-primary);
 }
 
 .section-desc {
-  color: var(--gray-text);
+  color: var(--text-secondary);
   margin-bottom: 25px;
   line-height: 1.6;
 }
@@ -587,9 +573,10 @@ const startSimulation = () => {
 }
 
 .metric-card {
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-default);
   padding: 20px 30px;
   min-width: 150px;
+  background: var(--bg-card);
 }
 
 .metric-value {
@@ -597,24 +584,26 @@ const startSimulation = () => {
   font-size: 1.8rem;
   font-weight: 520;
   margin-bottom: 5px;
+  color: var(--text-primary);
 }
 
 .metric-label {
   font-size: 0.85rem;
-  color: #999;
+  color: var(--text-muted);
 }
 
-/* 项目模拟步骤介绍 */
+/* Workflow Steps */
 .steps-container {
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-default);
   padding: 30px;
   position: relative;
+  background: var(--bg-card);
 }
 
 .steps-header {
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  color: #999;
+  color: var(--text-muted);
   margin-bottom: 25px;
   display: flex;
   align-items: center;
@@ -641,7 +630,7 @@ const startSimulation = () => {
 .step-num {
   font-family: var(--font-mono);
   font-weight: 700;
-  color: var(--black);
+  color: var(--text-primary);
   opacity: 0.3;
 }
 
@@ -653,21 +642,23 @@ const startSimulation = () => {
   font-weight: 520;
   font-size: 1rem;
   margin-bottom: 4px;
+  color: var(--text-primary);
 }
 
 .step-desc {
   font-size: 0.85rem;
-  color: var(--gray-text);
+  color: var(--text-secondary);
 }
 
-/* 右侧交互控制台 */
+/* Right Console Panel */
 .right-panel {
   flex: 1.2;
 }
 
 .console-box {
-  border: 1px solid #CCC; /* 外部实线 */
-  padding: 8px; /* 内边距形成双重边框感 */
+  border: 1px solid var(--border-strong);
+  padding: 8px;
+  background: var(--bg-surface);
 }
 
 .console-section {
@@ -684,11 +675,11 @@ const startSimulation = () => {
   margin-bottom: 15px;
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .upload-zone {
-  border: 1px dashed #CCC;
+  border: 1px dashed var(--border-strong);
   height: 200px;
   overflow-y: auto;
   display: flex;
@@ -696,7 +687,7 @@ const startSimulation = () => {
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s;
-  background: #FAFAFA;
+  background: var(--bg-elevated);
 }
 
 .upload-zone.has-files {
@@ -704,8 +695,8 @@ const startSimulation = () => {
 }
 
 .upload-zone:hover {
-  background: #F0F0F0;
-  border-color: #999;
+  background: var(--bg-hover);
+  border-color: var(--accent);
 }
 
 .upload-placeholder {
@@ -715,24 +706,25 @@ const startSimulation = () => {
 .upload-icon {
   width: 40px;
   height: 40px;
-  border: 1px solid #DDD;
+  border: 1px solid var(--border-default);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 15px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .upload-title {
   font-weight: 500;
   font-size: 0.9rem;
   margin-bottom: 5px;
+  color: var(--text-primary);
 }
 
 .upload-hint {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .file-list {
@@ -746,11 +738,12 @@ const startSimulation = () => {
 .file-item {
   display: flex;
   align-items: center;
-  background: var(--white);
+  background: var(--bg-card);
   padding: 8px 12px;
-  border: 1px solid #EEE;
+  border: 1px solid var(--border-subtle);
   font-family: var(--font-mono);
   font-size: 0.85rem;
+  color: var(--text-primary);
 }
 
 .file-name {
@@ -763,7 +756,7 @@ const startSimulation = () => {
   border: none;
   cursor: pointer;
   font-size: 1.2rem;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .console-divider {
@@ -777,21 +770,21 @@ const startSimulation = () => {
   content: '';
   flex: 1;
   height: 1px;
-  background: #EEE;
+  background: var(--border-subtle);
 }
 
 .console-divider span {
   padding: 0 15px;
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: #BBB;
+  color: var(--text-muted);
   letter-spacing: 1px;
 }
 
 .input-wrapper {
   position: relative;
-  border: 1px solid #DDD;
-  background: #FAFAFA;
+  border: 1px solid var(--border-default);
+  background: var(--bg-elevated);
 }
 
 .code-input {
@@ -805,6 +798,11 @@ const startSimulation = () => {
   resize: vertical;
   outline: none;
   min-height: 150px;
+  color: var(--text-primary);
+}
+
+.code-input::placeholder {
+  color: var(--text-muted);
 }
 
 .model-badge {
@@ -813,13 +811,13 @@ const startSimulation = () => {
   right: 15px;
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: #AAA;
+  color: var(--text-muted);
 }
 
 .start-engine-btn {
   width: 100%;
-  background: var(--black);
-  color: var(--white);
+  background: var(--accent);
+  color: var(--text-primary);
   border: none;
   padding: 20px;
   font-family: var(--font-mono);
@@ -835,16 +833,15 @@ const startSimulation = () => {
   overflow: hidden;
 }
 
-/* 可点击状态（非禁用） */
 .start-engine-btn:not(:disabled) {
-  background: var(--black);
-  border: 1px solid var(--black);
+  background: var(--accent);
+  border: 1px solid var(--accent);
   animation: pulse-border 2s infinite;
 }
 
 .start-engine-btn:hover:not(:disabled) {
-  background: var(--orange);
-  border-color: var(--orange);
+  background: var(--accent-dim);
+  border-color: var(--accent-dim);
   transform: translateY(-2px);
 }
 
@@ -853,35 +850,33 @@ const startSimulation = () => {
 }
 
 .start-engine-btn:disabled {
-  background: #E5E5E5;
-  color: #999;
+  background: var(--bg-hover);
+  color: var(--text-muted);
   cursor: not-allowed;
   transform: none;
-  border: 1px solid #E5E5E5;
+  border: 1px solid var(--border-subtle);
 }
 
-/* 引导动画：微妙的边框脉冲 */
 @keyframes pulse-border {
-  0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); }
-  70% { box-shadow: 0 0 0 6px rgba(0, 0, 0, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0.3); }
+  70% { box-shadow: 0 0 0 6px rgba(255, 69, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0); }
 }
 
-/* 响应式适配 */
 @media (max-width: 1024px) {
   .dashboard-section {
     flex-direction: column;
   }
-  
+
   .hero-section {
     flex-direction: column;
   }
-  
+
   .hero-left {
     padding-right: 0;
     margin-bottom: 40px;
   }
-  
+
   .hero-logo {
     max-width: 200px;
     margin-bottom: 20px;

@@ -10,14 +10,14 @@
       <div class="gradient-overlay"></div>
     </div>
 
-    <!-- 标题区域 -->
+    <!-- Title area -->
     <div class="section-header">
       <div class="section-line"></div>
-      <span class="section-title">推演记录</span>
+      <span class="section-title">History</span>
       <div class="section-line"></div>
     </div>
 
-    <!-- 卡片容器（只在有项目时显示） -->
+    <!-- Cards container (shown only when projects exist) -->
     <div v-if="projects.length > 0" class="cards-container" :class="{ expanded: isExpanded }" :style="containerStyle">
       <div 
         v-for="(project, index) in projects" 
@@ -29,61 +29,61 @@
         @mouseleave="hoveringCard = null"
         @click="navigateToProject(project)"
       >
-        <!-- 卡片头部：simulation_id 和 功能可用状态 -->
+        <!-- Card header: simulation_id and feature availability -->
         <div class="card-header">
           <span class="card-id">{{ formatSimulationId(project.simulation_id) }}</span>
           <div class="card-status-icons">
             <span 
               class="status-icon" 
               :class="{ available: project.project_id, unavailable: !project.project_id }"
-              title="图谱构建"
+              title="Graph Build"
             >◇</span>
-            <span 
-              class="status-icon available" 
-              title="环境搭建"
+            <span
+              class="status-icon available"
+              title="Env Setup"
             >◈</span>
-            <span 
-              class="status-icon" 
+            <span
+              class="status-icon"
               :class="{ available: project.report_id, unavailable: !project.report_id }"
-              title="分析报告"
+              title="Report"
             >◆</span>
           </div>
         </div>
 
-        <!-- 文件列表区域 -->
+        <!-- Files list area -->
         <div class="card-files-wrapper">
-          <!-- 角落装饰 - 取景框风格 -->
+          <!-- Corner decoration - viewfinder style -->
           <div class="corner-mark top-left-only"></div>
-          
-          <!-- 文件列表 -->
+
+          <!-- Files list -->
           <div class="files-list" v-if="project.files && project.files.length > 0">
-            <div 
-              v-for="(file, fileIndex) in project.files.slice(0, 3)" 
+            <div
+              v-for="(file, fileIndex) in project.files.slice(0, 3)"
               :key="fileIndex"
               class="file-item"
             >
               <span class="file-tag" :class="getFileType(file.filename)">{{ getFileTypeLabel(file.filename) }}</span>
               <span class="file-name">{{ truncateFilename(file.filename, 20) }}</span>
             </div>
-            <!-- 如果有更多文件，显示提示 -->
+            <!-- Show hint if more files -->
             <div v-if="project.files.length > 3" class="files-more">
-              +{{ project.files.length - 3 }} 个文件
+              +{{ project.files.length - 3 }} files
             </div>
           </div>
-          <!-- 无文件时的占位 -->
+          <!-- Placeholder when no files -->
           <div class="files-empty" v-else>
             <span class="empty-file-icon">◇</span>
-            <span class="empty-file-text">暂无文件</span>
+            <span class="empty-file-text">No files</span>
           </div>
         </div>
 
-        <!-- 卡片标题（使用模拟需求的前20字作为标题） -->
+        <!-- Card title (first 20 characters of simulation requirement) -->
         <h3 class="card-title">{{ getSimulationTitle(project.simulation_requirement) }}</h3>
 
-        <!-- 卡片描述（模拟需求完整展示） -->
+        <!-- Card description (full simulation requirement display) -->
         <p class="card-desc">{{ truncateText(project.simulation_requirement, 55) }}</p>
 
-        <!-- 卡片底部 -->
+        <!-- Card footer -->
         <div class="card-footer">
           <div class="card-datetime">
             <span class="card-date">{{ formatDate(project.created_at) }}</span>
@@ -94,23 +94,23 @@
           </span>
         </div>
         
-        <!-- 底部装饰线 (hover时展开) -->
+        <!-- Bottom decoration line (expands on hover) -->
         <div class="card-bottom-line"></div>
       </div>
     </div>
 
-    <!-- 加载状态 -->
+    <!-- Loading state -->
     <div v-if="loading" class="loading-state">
       <span class="loading-spinner"></span>
-      <span class="loading-text">加载中...</span>
+      <span class="loading-text">Loading...</span>
     </div>
 
-    <!-- 历史回放详情弹窗 -->
+    <!-- History replay modal -->
     <Teleport to="body">
       <Transition name="modal">
         <div v-if="selectedProject" class="modal-overlay" @click.self="closeModal">
           <div class="modal-content">
-            <!-- 弹窗头部 -->
+            <!-- Modal header -->
             <div class="modal-header">
               <div class="modal-title-section">
                 <span class="modal-id">{{ formatSimulationId(selectedProject.simulation_id) }}</span>
@@ -122,35 +122,35 @@
               <button class="modal-close" @click="closeModal">×</button>
             </div>
 
-            <!-- 弹窗内容 -->
+            <!-- Modal content -->
             <div class="modal-body">
-              <!-- 模拟需求 -->
+              <!-- Simulation requirement -->
               <div class="modal-section">
-                <div class="modal-label">模拟需求</div>
-                <div class="modal-requirement">{{ selectedProject.simulation_requirement || '无' }}</div>
+                <div class="modal-label">Simulation Requirement</div>
+                <div class="modal-requirement">{{ selectedProject.simulation_requirement || 'None' }}</div>
               </div>
 
-              <!-- 文件列表 -->
+              <!-- Files list -->
               <div class="modal-section">
-                <div class="modal-label">关联文件</div>
+                <div class="modal-label">Files</div>
                 <div class="modal-files" v-if="selectedProject.files && selectedProject.files.length > 0">
                   <div v-for="(file, index) in selectedProject.files" :key="index" class="modal-file-item">
                     <span class="file-tag" :class="getFileType(file.filename)">{{ getFileTypeLabel(file.filename) }}</span>
                     <span class="modal-file-name">{{ file.filename }}</span>
                   </div>
                 </div>
-                <div class="modal-empty" v-else>暂无关联文件</div>
+                <div class="modal-empty" v-else>No files linked</div>
               </div>
             </div>
 
-            <!-- 推演回放分割线 -->
+            <!-- History replay divider -->
             <div class="modal-divider">
               <span class="divider-line"></span>
-              <span class="divider-text">推演回放</span>
+              <span class="divider-text">Replay</span>
               <span class="divider-line"></span>
             </div>
 
-            <!-- 导航按钮 -->
+            <!-- Navigation buttons -->
             <div class="modal-actions">
               <button 
                 class="modal-btn btn-project" 
@@ -159,29 +159,29 @@
               >
                 <span class="btn-step">Step1</span>
                 <span class="btn-icon">◇</span>
-                <span class="btn-text">图谱构建</span>
+                <span class="btn-text">Graph Build</span>
               </button>
-              <button 
-                class="modal-btn btn-simulation" 
+              <button
+                class="modal-btn btn-simulation"
                 @click="goToSimulation"
               >
                 <span class="btn-step">Step2</span>
                 <span class="btn-icon">◈</span>
-                <span class="btn-text">环境搭建</span>
+                <span class="btn-text">Env Setup</span>
               </button>
-              <button 
-                class="modal-btn btn-report" 
+              <button
+                class="modal-btn btn-report"
                 @click="goToReport"
                 :disabled="!selectedProject.report_id"
               >
                 <span class="btn-step">Step4</span>
                 <span class="btn-icon">◆</span>
-                <span class="btn-text">分析报告</span>
+                <span class="btn-text">Report</span>
               </button>
             </div>
-            <!-- 不可回放提示 -->
+            <!-- Non-replayable hint -->
             <div class="modal-playback-hint">
-              <span class="hint-text">Step3「开始模拟」与 Step5「深度互动」需在运行中启动，不支持历史回放</span>
+              <span class="hint-text">Step 3 (Simulate) and Step 5 (Deep Interact) must be launched live — history replay not supported</span>
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@ const route = useRoute()
 // 状态
 const projects = ref([])
 const loading = ref(true)
-const isExpanded = ref(false)
+const isExpanded = ref(true)
 const hoveringCard = ref(null)
 const historyContainer = ref(null)
 const selectedProject = ref(null)  // 当前选中的项目（用于弹窗）
@@ -210,54 +210,54 @@ let isAnimating = false  // 动画锁，防止闪烁
 let expandDebounceTimer = null  // 防抖定时器
 let pendingState = null  // 记录待执行的目标状态
 
-// 卡片布局配置 - 调整为更宽的比例
+// Card layout config - wider aspect ratio
 const CARDS_PER_ROW = 4
-const CARD_WIDTH = 280  
-const CARD_HEIGHT = 280 
+const CARD_WIDTH = 280
+const CARD_HEIGHT = 280
 const CARD_GAP = 24
 
-// 动态计算容器高度样式
+// Dynamically compute container height style
 const containerStyle = computed(() => {
   if (!isExpanded.value) {
-    // 折叠态：固定高度
+    // Collapsed state: fixed height
     return { minHeight: '420px' }
   }
-  
-  // 展开态：根据卡片数量动态计算高度
+
+  // Expanded state: dynamic height based on card count
   const total = projects.value.length
   if (total === 0) {
     return { minHeight: '280px' }
   }
-  
+
   const rows = Math.ceil(total / CARDS_PER_ROW)
-  // 计算实际需要的高度：行数 * 卡片高度 + (行数-1) * 间距 + 少量底部间距
+  // Calculate actual required height: rows * card height + (rows-1) * gap + bottom spacing
   const expandedHeight = rows * CARD_HEIGHT + (rows - 1) * CARD_GAP + 10
-  
+
   return { minHeight: `${expandedHeight}px` }
 })
 
-// 获取卡片样式
+// Get card styles
 const getCardStyle = (index) => {
   const total = projects.value.length
-  
+
   if (isExpanded.value) {
-    // 展开态：网格布局
+    // Expanded state: grid layout
     const transition = 'transform 700ms cubic-bezier(0.23, 1, 0.32, 1), opacity 700ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease, border-color 0.3s ease'
 
     const col = index % CARDS_PER_ROW
     const row = Math.floor(index / CARDS_PER_ROW)
-    
-    // 计算当前行的卡片数量，确保每行居中
+
+    // Calculate current row card count, ensure centered rows
     const currentRowStart = row * CARDS_PER_ROW
     const currentRowCards = Math.min(CARDS_PER_ROW, total - currentRowStart)
-    
+
     const rowWidth = currentRowCards * CARD_WIDTH + (currentRowCards - 1) * CARD_GAP
-    
+
     const startX = -(rowWidth / 2) + (CARD_WIDTH / 2)
     const colInRow = index % CARDS_PER_ROW
     const x = startX + colInRow * (CARD_WIDTH + CARD_GAP)
-    
-    // 向下展开，增加与标题的间距
+
+    // Expand downward, increase spacing from title
     const y = 20 + row * (CARD_HEIGHT + CARD_GAP)
 
     return {
@@ -267,18 +267,18 @@ const getCardStyle = (index) => {
       transition: transition
     }
   } else {
-    // 折叠态：扇形堆叠
+    // Collapsed state: fan stacking
     const transition = 'transform 700ms cubic-bezier(0.23, 1, 0.32, 1), opacity 700ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease, border-color 0.3s ease'
 
     const centerIndex = (total - 1) / 2
     const offset = index - centerIndex
-    
+
     const x = offset * 35
-    // 调整起始位置，靠近标题但保持适当间距
+    // Adjust starting position, close to title but with proper spacing
     const y = 25 + Math.abs(offset) * 8
     const r = offset * 3
     const s = 0.95 - Math.abs(offset) * 0.05
-    
+
     return {
       transform: `translate(${x}px, ${y}px) rotate(${r}deg) scale(${s})`,
       zIndex: 10 + index,
@@ -288,24 +288,24 @@ const getCardStyle = (index) => {
   }
 }
 
-// 根据轮数进度获取样式类
+// Get style class based on round progress
 const getProgressClass = (simulation) => {
   const current = simulation.current_round || 0
   const total = simulation.total_rounds || 0
-  
+
   if (total === 0 || current === 0) {
-    // 未开始
+    // Not started
     return 'not-started'
   } else if (current >= total) {
-    // 已完成
+    // Complete
     return 'completed'
   } else {
-    // 进行中
+    // In progress
     return 'in-progress'
   }
 }
 
-// 格式化日期（只显示日期部分）
+// Format date (show date part only)
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
   try {
@@ -316,7 +316,7 @@ const formatDate = (dateStr) => {
   }
 }
 
-// 格式化时间（显示时:分）
+// Format time (show hours:minutes)
 const formatTime = (dateStr) => {
   if (!dateStr) return ''
   try {
@@ -329,35 +329,35 @@ const formatTime = (dateStr) => {
   }
 }
 
-// 截断文本
+// Truncate text
 const truncateText = (text, maxLength) => {
   if (!text) return ''
   return text.length > maxLength ? text.slice(0, maxLength) + '...' : text
 }
 
-// 从模拟需求生成标题（取前20字）
+// Generate title from simulation requirement (first 20 characters)
 const getSimulationTitle = (requirement) => {
-  if (!requirement) return '未命名模拟'
+  if (!requirement) return 'Unnamed Simulation'
   const title = requirement.slice(0, 20)
   return requirement.length > 20 ? title + '...' : title
 }
 
-// 格式化 simulation_id 显示（截取前6位）
+// Format simulation_id display (first 6 characters)
 const formatSimulationId = (simulationId) => {
   if (!simulationId) return 'SIM_UNKNOWN'
   const prefix = simulationId.replace('sim_', '').slice(0, 6)
   return `SIM_${prefix.toUpperCase()}`
 }
 
-// 格式化轮数显示（当前轮/总轮数）
+// Format rounds display (current/total)
 const formatRounds = (simulation) => {
   const current = simulation.current_round || 0
   const total = simulation.total_rounds || 0
-  if (total === 0) return '未开始'
-  return `${current}/${total} 轮`
+  if (total === 0) return 'Not started'
+  return `${current}/${total} rounds`
 }
 
-// 获取文件类型（用于样式）
+// Get file type (for styling)
 const getFileType = (filename) => {
   if (!filename) return 'other'
   const ext = filename.split('.').pop()?.toLowerCase()
@@ -373,35 +373,35 @@ const getFileType = (filename) => {
   return typeMap[ext] || 'other'
 }
 
-// 获取文件类型标签文本
+// Get file type label text
 const getFileTypeLabel = (filename) => {
   if (!filename) return 'FILE'
   const ext = filename.split('.').pop()?.toUpperCase()
   return ext || 'FILE'
 }
 
-// 截断文件名（保留扩展名）
+// Truncate filename (keep extension)
 const truncateFilename = (filename, maxLength) => {
-  if (!filename) return '未知文件'
+  if (!filename) return 'Unknown file'
   if (filename.length <= maxLength) return filename
-  
+
   const ext = filename.includes('.') ? '.' + filename.split('.').pop() : ''
   const nameWithoutExt = filename.slice(0, filename.length - ext.length)
   const truncatedName = nameWithoutExt.slice(0, maxLength - ext.length - 3) + '...'
   return truncatedName + ext
 }
 
-// 打开项目详情弹窗
+// Open project details modal
 const navigateToProject = (simulation) => {
   selectedProject.value = simulation
 }
 
-// 关闭弹窗
+// Close modal
 const closeModal = () => {
   selectedProject.value = null
 }
 
-// 导航到图谱构建页面（Project）
+// Navigate to graph build page (Project)
 const goToProject = () => {
   if (selectedProject.value?.project_id) {
     router.push({
@@ -412,7 +412,7 @@ const goToProject = () => {
   }
 }
 
-// 导航到环境配置页面（Simulation）
+// Navigate to env setup page (Simulation)
 const goToSimulation = () => {
   if (selectedProject.value?.simulation_id) {
     router.push({
@@ -423,7 +423,7 @@ const goToSimulation = () => {
   }
 }
 
-// 导航到分析报告页面（Report）
+// Navigate to report page (Report)
 const goToReport = () => {
   if (selectedProject.value?.report_id) {
     router.push({
@@ -434,7 +434,7 @@ const goToReport = () => {
   }
 }
 
-// 加载历史项目
+// Load history projects
 const loadHistory = async () => {
   try {
     loading.value = true
@@ -443,65 +443,65 @@ const loadHistory = async () => {
       projects.value = response.data || []
     }
   } catch (error) {
-    console.error('加载历史项目失败:', error)
+    console.error('Failed to load history projects:', error)
     projects.value = []
   } finally {
     loading.value = false
   }
 }
 
-// 初始化 IntersectionObserver
+// Initialize IntersectionObserver
 const initObserver = () => {
   if (observer) {
     observer.disconnect()
   }
-  
+
   observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         const shouldExpand = entry.isIntersecting
-        
-        // 更新待执行的目标状态（无论是否在动画中都要记录最新的目标状态）
+
+        // Update pending target state (always record latest regardless of animation)
         pendingState = shouldExpand
-        
-        // 清除之前的防抖定时器（新的滚动意图会覆盖旧的）
+
+        // Clear previous debounce timer (new scroll intent overrides old)
         if (expandDebounceTimer) {
           clearTimeout(expandDebounceTimer)
           expandDebounceTimer = null
         }
-        
-        // 如果正在动画中，只记录状态，等动画结束后处理
+
+        // If animating, only record state, handle after animation completes
         if (isAnimating) return
-        
-        // 如果目标状态与当前状态相同，不需要处理
+
+        // If target state matches current state, no action needed
         if (shouldExpand === isExpanded.value) {
           pendingState = null
           return
         }
-        
-        // 使用防抖延迟状态切换，防止快速闪烁
-        // 展开时延迟较短(50ms)，收起时延迟较长(200ms)以增加稳定性
+
+        // Use debounce delay for state switch, prevent rapid flickering
+        // Shorter delay on expand (50ms), longer on collapse (200ms) for stability
         const delay = shouldExpand ? 50 : 200
-        
+
         expandDebounceTimer = setTimeout(() => {
-          // 检查是否正在动画
+          // Check if still animating
           if (isAnimating) return
-          
-          // 检查待执行状态是否仍需要执行（可能已被后续滚动覆盖）
+
+          // Check if pending state still needs execution (may be overridden by later scroll)
           if (pendingState === null || pendingState === isExpanded.value) return
-          
-          // 设置动画锁
+
+          // Set animation lock
           isAnimating = true
           isExpanded.value = pendingState
           pendingState = null
-          
-          // 动画完成后解除锁定，并检查是否有待处理的状态变化
+
+          // Unlock after animation completes, check for pending state changes
           setTimeout(() => {
             isAnimating = false
-            
-            // 动画结束后，检查是否有新的待执行状态
+
+            // After animation, check for new pending state
             if (pendingState !== null && pendingState !== isExpanded.value) {
-              // 延迟一小段时间再执行，避免太快切换
+              // Delay slightly to avoid too-fast switching
               expandDebounceTimer = setTimeout(() => {
                 if (pendingState !== null && pendingState !== isExpanded.value) {
                   isAnimating = true
@@ -518,20 +518,19 @@ const initObserver = () => {
       })
     },
     {
-      // 使用多个阈值，使检测更平滑
-      threshold: [0.4, 0.6, 0.8],
-      // 调整 rootMargin，视口底部向上收缩，需要滚动更多才触发展开
-      rootMargin: '0px 0px -150px 0px'
+      // Use multiple thresholds for smoother detection
+      threshold: [0.1, 0.2, 0.3],
+      rootMargin: '0px 0px 0px 0px'
     }
   )
-  
-  // 开始观察
+
+  // Start observing
   if (historyContainer.value) {
     observer.observe(historyContainer.value)
   }
 }
 
-// 监听路由变化，当返回首页时重新加载数据
+// Watch route changes, reload data when returning home
 watch(() => route.path, (newPath) => {
   if (newPath === '/') {
     loadHistory()
@@ -539,28 +538,28 @@ watch(() => route.path, (newPath) => {
 })
 
 onMounted(async () => {
-  // 确保 DOM 渲染完成后再加载数据
+  // Ensure DOM rendering completes before loading data
   await nextTick()
   await loadHistory()
-  
-  // 等待 DOM 渲染后初始化观察器
+
+  // Initialize observer after DOM renders
   setTimeout(() => {
     initObserver()
   }, 100)
 })
 
-// 如果使用 keep-alive，在组件激活时重新加载数据
+// Reload data on component activation if using keep-alive
 onActivated(() => {
   loadHistory()
 })
 
 onUnmounted(() => {
-  // 清理 Intersection Observer
+  // Clean up Intersection Observer
   if (observer) {
     observer.disconnect()
     observer = null
   }
-  // 清理防抖定时器
+  // Clean up debounce timer
   if (expandDebounceTimer) {
     clearTimeout(expandDebounceTimer)
     expandDebounceTimer = null
@@ -569,7 +568,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 容器 */
+/* Container */
 .history-database {
   position: relative;
   width: 100%;
@@ -579,13 +578,13 @@ onUnmounted(() => {
   overflow: visible;
 }
 
-/* 无项目时简化显示 */
+/* Simplified display when no projects */
 .history-database.no-projects {
   min-height: auto;
   padding: 40px 0 20px;
 }
 
-/* 技术网格背景 */
+/* Tech grid background */
 .tech-grid-bg {
   position: absolute;
   top: 0;
@@ -596,18 +595,17 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* 使用CSS背景图案创建固定间距的正方形网格 */
+/* CSS background pattern: fixed-spacing square grid */
 .grid-pattern {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
-    linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
-  /* 从左上角开始定位，高度变化时只在底部扩展，不影响已有网格位置 */
   background-position: top left;
 }
 
@@ -617,13 +615,13 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.9) 0%, transparent 15%, transparent 85%, rgba(255, 255, 255, 0.9) 100%),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0%, transparent 20%, transparent 80%, rgba(255, 255, 255, 0.8) 100%);
+  background:
+    linear-gradient(to right, rgba(10, 10, 10, 0.9) 0%, transparent 15%, transparent 85%, rgba(10, 10, 10, 0.9) 100%),
+    linear-gradient(to bottom, rgba(10, 10, 10, 0.8) 0%, transparent 20%, transparent 80%, rgba(10, 10, 10, 0.8) 100%);
   pointer-events: none;
 }
 
-/* 标题区域 */
+/* Section header */
 .section-header {
   position: relative;
   z-index: 100;
@@ -632,26 +630,26 @@ onUnmounted(() => {
   justify-content: center;
   gap: 24px;
   margin-bottom: 24px;
-  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-family: var(--font-mono);
   padding: 0 40px;
 }
 
 .section-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #E5E7EB, transparent);
+  background: linear-gradient(90deg, transparent, var(--border-default), transparent);
   max-width: 300px;
 }
 
 .section-title {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #9CA3AF;
+  color: var(--text-muted);
   letter-spacing: 3px;
   text-transform: uppercase;
 }
 
-/* 卡片容器 */
+/* Cards container */
 .cards-container {
   position: relative;
   display: flex;
@@ -659,25 +657,25 @@ onUnmounted(() => {
   align-items: flex-start;
   padding: 0 40px;
   transition: min-height 700ms cubic-bezier(0.23, 1, 0.32, 1);
-  /* min-height 由 JS 动态计算，根据卡片数量自适应 */
+  /* min-height dynamically computed by JS, adapts to card count */
 }
 
-/* 项目卡片 */
+/* Project card */
 .project-card {
   position: absolute;
   width: 280px;
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 0;
   padding: 14px;
   cursor: pointer;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 700ms cubic-bezier(0.23, 1, 0.32, 1), opacity 700ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .project-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  border-color: var(--accent);
   z-index: 1000 !important;
 }
 
@@ -685,25 +683,25 @@ onUnmounted(() => {
   z-index: 1000 !important;
 }
 
-/* 卡片头部 */
+/* Card header */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #F3F4F6;
-  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
   font-size: 0.7rem;
 }
 
 .card-id {
-  color: #6B7280;
+  color: var(--text-secondary);
   letter-spacing: 0.5px;
   font-weight: 500;
 }
 
-/* 功能状态图标组 */
+/* Feature status icon group */
 .card-status-icons {
   display: flex;
   align-items: center;
@@ -720,17 +718,17 @@ onUnmounted(() => {
   opacity: 1;
 }
 
-/* 不同功能的颜色 */
-.status-icon:nth-child(1).available { color: #3B82F6; } /* 图谱构建 - 蓝色 */
-.status-icon:nth-child(2).available { color: #F59E0B; } /* 环境搭建 - 橙色 */
-.status-icon:nth-child(3).available { color: #10B981; } /* 分析报告 - 绿色 */
+/* Feature icon colors */
+.status-icon:nth-child(1).available { color: #4a9eff; } /* Graph Build - blue */
+.status-icon:nth-child(2).available { color: var(--accent); } /* Env Setup - orange */
+.status-icon:nth-child(3).available { color: var(--status-success); } /* Report - green */
 
 .status-icon.unavailable {
-  color: #D1D5DB;
+  color: var(--border-default);
   opacity: 0.5;
 }
 
-/* 轮数进度显示 */
+/* Rounds progress display */
 .card-progress {
   display: flex;
   align-items: center;
@@ -744,13 +742,13 @@ onUnmounted(() => {
   font-size: 0.5rem;
 }
 
-/* 进度状态颜色 */
-.card-progress.completed { color: #10B981; }    /* 已完成 - 绿色 */
-.card-progress.in-progress { color: #F59E0B; }  /* 进行中 - 橙色 */
-.card-progress.not-started { color: #9CA3AF; }  /* 未开始 - 灰色 */
-.card-status.pending { color: #9CA3AF; }
+/* Progress status colors */
+.card-progress.completed { color: var(--status-success); }
+.card-progress.in-progress { color: var(--accent); }
+.card-progress.not-started { color: var(--text-muted); }
+.card-status.pending { color: var(--text-muted); }
 
-/* 文件列表区域 */
+/* Files list area */
 .card-files-wrapper {
   position: relative;
   width: 100%;
@@ -758,9 +756,9 @@ onUnmounted(() => {
   max-height: 110px;
   margin-bottom: 12px;
   padding: 8px 10px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f4 100%);
+  background: var(--bg-elevated);
   border-radius: 4px;
-  border: 1px solid #e8eaed;
+  border: 1px solid var(--border-subtle);
   overflow: hidden;
 }
 
@@ -770,16 +768,16 @@ onUnmounted(() => {
   gap: 4px;
 }
 
-/* 更多文件提示 */
+/* More files hint */
 .files-more {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 3px 6px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.6rem;
-  color: #6B7280;
-  background: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 3px;
   letter-spacing: 0.3px;
 }
@@ -789,18 +787,18 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 4px 6px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 3px;
   transition: all 0.2s ease;
 }
 
 .file-item:hover {
-  background: rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 0.08);
   transform: translateX(2px);
-  border-color: #e5e7eb;
+  border-color: var(--border-default);
 }
 
-/* 简约文件标签样式 */
+/* File tag styles */
 .file-tag {
   display: inline-flex;
   align-items: center;
@@ -808,7 +806,7 @@ onUnmounted(() => {
   height: 16px;
   padding: 0 4px;
   border-radius: 2px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.55rem;
   font-weight: 600;
   line-height: 1;
@@ -818,35 +816,35 @@ onUnmounted(() => {
   min-width: 28px;
 }
 
-/* 低饱和度配色方案 - Morandi色系 */
-.file-tag.pdf { background: #f2e6e6; color: #a65a5a; }
-.file-tag.doc { background: #e6eff5; color: #5a7ea6; }
-.file-tag.xls { background: #e6f2e8; color: #5aa668; }
-.file-tag.ppt { background: #f5efe6; color: #a6815a; }
-.file-tag.txt { background: #f0f0f0; color: #757575; }
-.file-tag.code { background: #eae6f2; color: #815aa6; }
-.file-tag.img { background: #e6f2f2; color: #5aa6a6; }
-.file-tag.zip { background: #f2f0e6; color: #a69b5a; }
-.file-tag.other { background: #f3f4f6; color: #6b7280; }
+/* Dark file type colors */
+.file-tag.pdf { background: rgba(166, 90, 90, 0.2); color: #c97a7a; }
+.file-tag.doc { background: rgba(90, 126, 166, 0.2); color: #7aa0c9; }
+.file-tag.xls { background: rgba(90, 166, 104, 0.2); color: #7ac98c; }
+.file-tag.ppt { background: rgba(166, 129, 90, 0.2); color: #c9a07a; }
+.file-tag.txt { background: rgba(117, 117, 117, 0.2); color: #999; }
+.file-tag.code { background: rgba(129, 90, 166, 0.2); color: #a07ac9; }
+.file-tag.img { background: rgba(90, 166, 166, 0.2); color: #7ac9c9; }
+.file-tag.zip { background: rgba(166, 155, 90, 0.2); color: #c9bc7a; }
+.file-tag.other { background: rgba(107, 114, 128, 0.2); color: var(--text-muted); }
 
 .file-name {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.7rem;
-  color: #4b5563;
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: 0.1px;
 }
 
-/* 无文件时的占位 */
+/* Empty files placeholder */
 .files-empty {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   height: 48px;
-  color: #9CA3AF;
+  color: var(--text-muted);
 }
 
 .empty-file-icon {
@@ -855,36 +853,36 @@ onUnmounted(() => {
 }
 
 .empty-file-text {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 0.5px;
 }
 
-/* 悬停时文件区域效果 */
+/* File area hover effect */
 .project-card:hover .card-files-wrapper {
-  border-color: #d1d5db;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-color: var(--border-default);
+  background: var(--bg-elevated);
 }
 
-/* 角落装饰 */
+/* Corner decoration */
 .corner-mark.top-left-only {
   position: absolute;
   top: 6px;
   left: 6px;
   width: 8px;
   height: 8px;
-  border-top: 1.5px solid rgba(0, 0, 0, 0.4);
-  border-left: 1.5px solid rgba(0, 0, 0, 0.4);
+  border-top: 1.5px solid var(--accent);
+  border-left: 1.5px solid var(--accent);
   pointer-events: none;
   z-index: 10;
 }
 
-/* 卡片标题 */
+/* Card title */
 .card-title {
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.9rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-primary);
   margin: 0 0 6px 0;
   line-height: 1.4;
   white-space: nowrap;
@@ -894,14 +892,14 @@ onUnmounted(() => {
 }
 
 .project-card:hover .card-title {
-  color: #2563EB;
+  color: var(--accent);
 }
 
-/* 卡片描述 */
+/* Card description */
 .card-desc {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.75rem;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0 0 16px 0;
   line-height: 1.5;
   height: 34px;
@@ -911,17 +909,17 @@ onUnmounted(() => {
   -webkit-box-orient: vertical;
 }
 
-/* 卡片底部 */
+/* Card footer */
 .card-footer {
   position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: 12px;
-  border-top: 1px solid #F3F4F6;
-  font-family: 'JetBrains Mono', monospace;
+  border-top: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
   font-size: 0.65rem;
-  color: #9CA3AF;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -946,19 +944,19 @@ onUnmounted(() => {
   font-size: 0.5rem;
 }
 
-/* 进度状态颜色 - 底部 */
-.card-footer .card-progress.completed { color: #10B981; }
-.card-footer .card-progress.in-progress { color: #F59E0B; }
-.card-footer .card-progress.not-started { color: #9CA3AF; }
+/* Progress status colors - footer */
+.card-footer .card-progress.completed { color: var(--status-success); }
+.card-footer .card-progress.in-progress { color: var(--accent); }
+.card-footer .card-progress.not-started { color: var(--text-muted); }
 
-/* 底部装饰线 */
+/* Bottom accent line */
 .card-bottom-line {
   position: absolute;
   bottom: 0;
   left: 0;
   height: 2px;
   width: 0;
-  background-color: #000;
+  background-color: var(--accent);
   transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   z-index: 20;
 }
@@ -967,14 +965,14 @@ onUnmounted(() => {
   width: 100%;
 }
 
-/* 空状态 */
+/* Empty / loading state */
 .empty-state, .loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
   padding: 48px;
-  color: #9CA3AF;
+  color: var(--text-muted);
 }
 
 .empty-icon {
@@ -985,8 +983,8 @@ onUnmounted(() => {
 .loading-spinner {
   width: 24px;
   height: 24px;
-  border: 2px solid #E5E7EB;
-  border-top-color: #6B7280;
+  border: 2px solid var(--border-default);
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -1011,14 +1009,14 @@ onUnmounted(() => {
   }
 }
 
-/* ===== 历史回放详情弹窗样式 ===== */
+/* ===== History replay modal ===== */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1027,14 +1025,14 @@ onUnmounted(() => {
 }
 
 .modal-content {
-  background: #FFFFFF;
+  background: var(--bg-surface);
   width: 560px;
   max-width: 90vw;
   max-height: 85vh;
   overflow-y: auto;
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--border-default);
   border-radius: 8px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
 }
 
 /* 动画过渡 */
@@ -1066,14 +1064,14 @@ onUnmounted(() => {
   opacity: 0;
 }
 
-/* 弹窗头部 */
+/* Modal header */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 32px;
-  border-bottom: 1px solid #F3F4F6;
-  background: #FFFFFF;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
 }
 
 .modal-title-section {
@@ -1083,10 +1081,10 @@ onUnmounted(() => {
 }
 
 .modal-id {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 1rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
   letter-spacing: 0.5px;
 }
 
@@ -1094,22 +1092,22 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 4px 8px;
   border-radius: 4px;
-  background: #F9FAFB;
+  background: var(--bg-elevated);
 }
 
-.modal-progress.completed { color: #10B981; background: rgba(16, 185, 129, 0.1); }
-.modal-progress.in-progress { color: #F59E0B; background: rgba(245, 158, 11, 0.1); }
-.modal-progress.not-started { color: #9CA3AF; background: #F3F4F6; }
+.modal-progress.completed { color: var(--status-success); background: rgba(34, 197, 94, 0.1); }
+.modal-progress.in-progress { color: var(--accent); background: rgba(255, 69, 0, 0.1); }
+.modal-progress.not-started { color: var(--text-muted); background: var(--bg-elevated); }
 
 .modal-create-time {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: #9CA3AF;
+  color: var(--text-muted);
   letter-spacing: 0.3px;
 }
 
@@ -1119,7 +1117,7 @@ onUnmounted(() => {
   border: none;
   background: transparent;
   font-size: 1.5rem;
-  color: #9CA3AF;
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1129,11 +1127,11 @@ onUnmounted(() => {
 }
 
 .modal-close:hover {
-  background: #F3F4F6;
-  color: #111827;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
 }
 
-/* 弹窗内容 */
+/* Modal body */
 .modal-body {
   padding: 24px 32px;
 }
@@ -1147,9 +1145,9 @@ onUnmounted(() => {
 }
 
 .modal-label {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: #6B7280;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 10px;
@@ -1158,11 +1156,11 @@ onUnmounted(() => {
 
 .modal-requirement {
   font-size: 0.95rem;
-  color: #374151;
+  color: var(--text-primary);
   line-height: 1.6;
   padding: 16px;
-  background: #F9FAFB;
-  border: 1px solid #F3F4F6;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
 }
 
@@ -1175,23 +1173,23 @@ onUnmounted(() => {
   padding-right: 4px;
 }
 
-/* 自定义滚动条样式 */
+/* Custom scrollbar */
 .modal-files::-webkit-scrollbar {
   width: 4px;
 }
 
 .modal-files::-webkit-scrollbar-track {
-  background: #F3F4F6;
+  background: var(--bg-elevated);
   border-radius: 2px;
 }
 
 .modal-files::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
+  background: var(--border-default);
   border-radius: 2px;
 }
 
 .modal-files::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
+  background: var(--border-strong);
 }
 
 .modal-file-item {
@@ -1199,20 +1197,20 @@ onUnmounted(() => {
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
   border-radius: 6px;
   transition: all 0.2s ease;
 }
 
 .modal-file-item:hover {
-  border-color: #D1D5DB;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-color: var(--border-default);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .modal-file-name {
   font-size: 0.85rem;
-  color: #4B5563;
+  color: var(--text-secondary);
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1221,44 +1219,44 @@ onUnmounted(() => {
 
 .modal-empty {
   font-size: 0.85rem;
-  color: #9CA3AF;
+  color: var(--text-muted);
   padding: 16px;
-  background: #F9FAFB;
-  border: 1px dashed #E5E7EB;
+  background: var(--bg-elevated);
+  border: 1px dashed var(--border-subtle);
   border-radius: 6px;
   text-align: center;
 }
 
-/* 推演回放分割线 */
+/* Replay divider */
 .modal-divider {
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 10px 32px 0;
-  background: #FFFFFF;
+  background: var(--bg-surface);
 }
 
 .divider-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #E5E7EB, transparent);
+  background: linear-gradient(90deg, transparent, var(--border-default), transparent);
 }
 
 .divider-text {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: #9CA3AF;
+  color: var(--text-muted);
   letter-spacing: 2px;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
-/* 导航按钮 */
+/* Navigation buttons */
 .modal-actions {
   display: flex;
   gap: 16px;
   padding: 20px 32px;
-  background: #FFFFFF;
+  background: var(--bg-surface);
 }
 
 .modal-btn {
@@ -1268,9 +1266,9 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 16px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  background: #FFFFFF;
+  background: var(--bg-elevated);
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
@@ -1278,22 +1276,22 @@ onUnmounted(() => {
 }
 
 .modal-btn:hover:not(:disabled) {
-  border-color: #000000;
+  border-color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(255, 69, 0, 0.2);
 }
 
 .modal-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background: #F9FAFB;
+  background: var(--bg-elevated);
 }
 
 .btn-step {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.6rem;
   font-weight: 500;
-  color: #9CA3AF;
+  color: var(--text-muted);
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
@@ -1305,34 +1303,34 @@ onUnmounted(() => {
 }
 
 .btn-text {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  color: #4B5563;
+  color: var(--text-secondary);
 }
 
-.modal-btn.btn-project .btn-icon { color: #3B82F6; }
-.modal-btn.btn-simulation .btn-icon { color: #F59E0B; }
-.modal-btn.btn-report .btn-icon { color: #10B981; }
+.modal-btn.btn-project .btn-icon { color: #4a9eff; }
+.modal-btn.btn-simulation .btn-icon { color: var(--accent); }
+.modal-btn.btn-report .btn-icon { color: var(--status-success); }
 
 .modal-btn:hover:not(:disabled) .btn-text {
-  color: #111827;
+  color: var(--text-primary);
 }
 
-/* 不可回放提示 */
+/* Playback hint */
 .modal-playback-hint {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 32px 20px;
-  background: #FFFFFF;
+  background: var(--bg-surface);
 }
 
 .hint-text {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: #9CA3AF;
+  color: var(--text-muted);
   letter-spacing: 0.3px;
   text-align: center;
   line-height: 1.5;
