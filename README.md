@@ -1,14 +1,14 @@
 <div align="center">
 
-# MiroFish — Dark Trading Theme Fork
+# MiroFish Extended-Safety
 
-**Multi-Agent Social Simulation Engine for Market Prediction**
+**Multi-Agent Social Simulation Engine with Safety & Reliability Focus**
 
-A fully translated, dark-themed fork with trading aesthetics. Predict markets and simulate futures through collective intelligence.
+A production-hardened fork emphasizing cost protection, state management, and session reliability.
 
 <img src="https://raw.githubusercontent.com/jonosin/MiroFish/main/static/screenshots/upload_report_hero.png" alt="Upload Any Report, Simulate the Future" width="85%"/>
 
-[![GitHub Stars](https://img.shields.io/github/stars/jonosin/MiroFish?style=flat-square&color=DAA520)](https://github.com/jonosin/MiroFish/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/jonosin/MiroFish?style=flat-square&color=4CAF50)](https://github.com/jonosin/MiroFish/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/jonosin/MiroFish?style=flat-square)](https://github.com/jonosin/MiroFish/network)
 
 </div>
@@ -17,7 +17,7 @@ A fully translated, dark-themed fork with trading aesthetics. Predict markets an
 
 ## 🎯 Overview
 
-**MiroFish** is a next-generation AI prediction engine powered by multi-agent technology. It extracts seed information from the real world (breaking news, policy drafts, market signals) and automatically constructs a high-fidelity parallel digital world. Within this space, thousands of agents with independent personalities, long-term memory, and behavioral logic interact freely and evolve socially.
+**MiroFish** is a next-generation AI prediction engine powered by multi-agent technology. It extracts seed information from the real world (breaking news, policy drafts, research reports) and automatically constructs a high-fidelity parallel digital world. Within this space, thousands of agents with independent personalities, long-term memory, and behavioral logic interact freely and evolve socially.
 
 Through **God's Eye** interaction, you can dynamically inject variables and precisely simulate future scenarios — **let the future unfold in a digital sandbox before decisions are made**.
 
@@ -30,23 +30,61 @@ Simply:
 
 ---
 
-## ✨ Extended-Safety Focus
+## ✨ What's Different: Extended-Safety
 
-This fork prioritizes **safety and reliability** to prevent accidental token consumption and enable robust session management:
+This fork prioritizes **safety, reliability, and cost control** to prevent accidental token consumption and enable robust session management.
 
-### Core Safety Improvements
-1. **Confirmation Modals at Navigation Level** — All token-consuming actions (env setup, simulation, report generation) require explicit confirmation **before** component initialization. Prevents the accidental initialization bug.
-2. **History-Aware Flows** — Navigating from History to an unset-up simulation shows cost estimates before proceeding. Auto-skip confirm if simulation already prepared.
-3. **Cancellation & Resume** — Stop persona generation mid-way and resume later without re-confirming. Graceful cleanup and partial progress preservation.
-4. **Accurate Status Tracking** — History cards display true simulation state (Ready, Stopped, Preparing, etc.) with progress counts and env setup status.
-5. **Stale Simulation Cleanup** — One-click deletion with cascade cleanup of all associated data (profiles, configs, reports, logs).
+### 🔒 Core Safety Improvements
 
-### Secondary Improvements
-- **Dark Theme UI** — Black background with orange accents (`#ff4500`) for better readability and reduced eye strain
-- **Full English UI** — All menus and labels in English for global accessibility
-- **Reliable History Display** — Fixed IntersectionObserver animations and state management
+**Problem Solved:** Original MiroFish initialized expensive operations (persona generation, simulations) automatically on navigation, with no way to stop mid-way.
 
-All core MiroFish simulation logic remains unchanged. Optimized for researchers who need reliable, auditable multi-agent simulations.
+**Solution:**
+1. **Navigation-Level Confirmation Modals** — All token-consuming actions require explicit confirmation **before** component initialization
+   - Entering Step 2 (Env Setup): Confirm before persona generation starts
+   - Entering Step 3 (Simulation): Confirm before simulation rounds begin
+   - Clear token cost estimates in every modal
+
+2. **History-Aware Flows** — Navigating from History to an unset-up simulation shows a cost warning
+   - Auto-skip confirm if simulation already has environment setup complete
+   - Prevents accidental re-initialization and double token consumption
+
+3. **Graceful Cancellation & Resume** — Stop persona generation mid-way and resume later
+   - Backend `_prepare_cancel_flags` system cleanly exits generation loop
+   - Resume button appears after stopping — no re-confirmation needed
+   - Partial progress preserved when possible
+
+4. **Accurate Session Status** — History cards show true simulation state
+   - Status badges: `Ready`, `Stopped`, `Preparing`, `Not Started`, `Error`
+   - Environment setup status: `◈ Env Ready` (green) vs. `◈ Env Not Set Up` (muted)
+   - Progress counts: "Stopped (12/40)", "Completed (40/40)", etc.
+
+5. **Stale Simulation Cleanup** — One-click deletion with cascade cleanup
+   - Delete any simulation from history
+   - Cascades to: profiles, configs, reports, SQLite DBs, run logs, interaction history
+   - Prevents orphaned simulations from accumulating
+
+### 📊 Backend State Management
+
+**Problem Solved:** Status mismatches between simulation state and UI; accidental initialization on mount; phase tracking was off-by-one.
+
+**Solution:**
+- **Accurate Phase Tracking** — Step indicators (01, 02, 03) properly reflect state
+  - No "Initializing" flash when component mounts post-simulation creation
+  - Phase starts at 1 for env setup (simulation already exists)
+
+- **Stopped State Persistence** — `isStopped` flag preserved across navigation and resume flows
+
+- **Graph Build Error Recovery** — Partial success handling
+  - If graph build fails after creating Zep graph group: `graph_id` is saved
+  - Simulation can proceed to Steps 2-3 without full graph data
+  - Zep enrichment gracefully falls back to empty results
+
+### 🌐 Full English UI
+
+All user-facing text translated to English:
+- Step labels, button text, modals, feedback messages
+- Status indicators and progress descriptions
+- Confirmation dialogs with clear action descriptions
 
 ---
 
@@ -65,7 +103,7 @@ All core MiroFish simulation logic remains unchanged. Optimized for researchers 
 1. **Configure environment variables**
    ```bash
    cp .env.example .env
-   # Edit .env with your LLM API keys
+   # Edit .env with your LLM API keys (Qwen, Claude, etc.)
    ```
 
 2. **Install dependencies**
@@ -78,7 +116,8 @@ All core MiroFish simulation logic remains unchanged. Optimized for researchers 
    npm start
    ```
 
-   Frontend runs on `http://localhost:3000`
+   Frontend runs on `http://localhost:3001`
+   Backend runs on `http://localhost:5001`
 
 ---
 
@@ -96,53 +135,16 @@ All core MiroFish simulation logic remains unchanged. Optimized for researchers 
 
 ## 🎨 Features
 
-- **Dark Trading UI** — Orange accents on black background, built with CSS custom properties for easy theming
-- **Full English** — All menus, labels, and guidance in English
+- **Confirmation-Gated Operations** — Explicit control over all API calls; no hidden initialization
+- **Full English UI** — All menus, labels, guidance, and error messages in English
 - **Dual LLM Slots** — Separate quality models for persona creation/reporting vs. simulation rounds (cost optimization)
-- **History Tracking** — Browse and replay previous simulations
+- **History Tracking** — Browse, manage, and replay previous simulations with accurate status
 - **Agent Interaction** — Deep conversation with simulated agents via God's Eye
+- **Session Recovery** — Resume stopped operations without re-confirmation or re-cost
 
 ---
 
-## 🛡️ Safety & Reliability (Recent Updates)
-
-### Confirmation & Cost Protection
-- **Token Cost Protection** — All API-consuming actions (graph build, persona generation, simulation rounds, report generation) require explicit confirmation before execution
-- **Navigation-Level Gating** — Confirmation modals appear **before** you navigate to token-consuming steps. Nothing initializes until you explicitly confirm
-- **History → Step 2 Confirm** — When navigating from History to an unset-up simulation, a confirmation modal warns you and shows token usage estimates
-
-### Cancellation & Resume
-- **Cancellable Persona Generation** — Stop button during environment setup. Pressing Stop mid-way pauses generation with full cleanup
-- **Resume Without Re-Confirm** — After stopping, a green **Resume Persona Generation** button appears. Click to resume without needing another confirmation
-- **Simulation Cancellation** — Stop simulation rounds anytime with immediate cleanup
-
-### History & Data Management
-- **Accurate Status Badges** — History cards now show:
-  - `◈ Env Ready` (green) — Environment already set up, profiles generated
-  - `◈ Env Not Set Up` (muted) — Environment not started or stopped mid-setup
-  - Progress indicator: "Stopped (N/M)", "Preparing...", "Completed", "Not Started", etc.
-- **Complete File Display** — History cards show all uploaded files (not limited to 3)
-- **Delete Simulation** — Right-click or use the Delete button in history modal to permanently remove a simulation and all associated data (profiles, configs, reports, logs)
-
-### Theme & UX
-- **Dark Theme Report Page** — Step 4 Report page now fully matches the dark trading aesthetic with proper contrast and styling
-- **Fixed History Display** — History cards display correctly with proper animation and state management
-
----
-
-## 📊 Screenshots & Contributions
-
-### Graph Visualization (Dark Theme)
-<img src="https://raw.githubusercontent.com/jonosin/MiroFish/main/static/screenshots/graph_dark.png" alt="Graph Relationship Visualization" width="48%"/>
-
-### UI Overview (Dark Theme)
-<img src="https://raw.githubusercontent.com/jonosin/MiroFish/main/static/screenshots/ui_dark.png" alt="Dark Theme UI" width="48%"/>
-
----
-
-## 📋 Improvements & Fixes (Extended-Safety Focus)
-
-This fork addresses critical safety and reliability gaps in the original MiroFish to prevent accidental token consumption and enable robust session management.
+## 📋 Improvements & Fixes
 
 ### 🔒 Safety & Cost Protection
 
@@ -200,20 +202,6 @@ This fork addresses critical safety and reliability gaps in the original MiroFis
 - **History Pagination** — History now loads up to 100 simulations (configurable), sorted by recency with active/running simulations first
 - **Safe Deletion** — Prompts with simulation ID for confirmation before permanent deletion
 
-### 🎨 UI/UX Consistency
-
-#### Dark Theme Completeness
-- **Step 4 Report Dark Theme** — Report generation page fully matches dark trading aesthetic
-  - Uses CSS custom properties for consistent coloring
-  - Proper contrast ratios for readability
-  - Orange accent colors for critical info (`#ff4500`)
-- **Consistent Status Colors** — All status indicators use same color palette across all views
-
-#### Fixed History Display
-- **IntersectionObserver Animations** — History cards animate in as they scroll into view (proper threshold tuning)
-- **Default State Handling** — Cards show correct initial state before data loads
-- **Responsive Card Layout** — Grid adapts to viewport with proper spacing
-
 ### 🔧 Backend Improvements
 
 #### State Management
@@ -238,7 +226,7 @@ All improvements have been tested with:
 - ✅ Resume after stopping persona generation mid-way
 - ✅ Deletion and cascade cleanup verification
 - ✅ State consistency across page reloads
-- ✅ Dark theme contrast and readability across all pages
+- ✅ End-to-end simulation runs with cost tracking
 
 ---
 
@@ -257,10 +245,12 @@ All improvements have been tested with:
 ## 🤝 Contributing
 
 Contributions welcome! This fork focuses on:
-- UI/UX improvements for trading workflows
-- Model optimization (cheaper inference, better quality)
+- Backend safety and state management improvements
+- Cost control and quota awareness
+- Session reliability and recovery
+- UI/UX clarity and English localization
+- Error handling and graceful degradation
 - Documentation and examples
-- Integration with market data APIs
 
 ---
 
@@ -270,4 +260,4 @@ Based on [original MiroFish](https://github.com/666ghj/MiroFish)
 
 ---
 
-**Made for traders. Built for the future.**
+**Built for reliability. Designed for control.**
