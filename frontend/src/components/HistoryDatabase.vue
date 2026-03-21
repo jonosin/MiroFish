@@ -125,7 +125,18 @@
                 </span>
                 <span class="modal-create-time">{{ formatDate(selectedProject.created_at) }} {{ formatTime(selectedProject.created_at) }}</span>
               </div>
-              <button class="modal-close" @click="closeModal">×</button>
+              <div class="modal-header-actions">
+                <button class="modal-delete-btn" @click="promptDeleteSimulation" title="Delete this simulation">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                    <path d="M10 11v6M14 11v6"></path>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                  </svg>
+                  Delete
+                </button>
+                <button class="modal-close" @click="closeModal">×</button>
+              </div>
             </div>
 
             <!-- Modal content -->
@@ -193,13 +204,42 @@
         </div>
       </Transition>
     </Teleport>
+
+    <!-- Delete confirm modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="showDeleteConfirm" class="modal-overlay" @click.self="showDeleteConfirm = false">
+          <div class="modal-content delete-confirm-modal">
+            <div class="modal-header">
+              <div class="modal-title-section">
+                <span class="modal-id">Delete Simulation</span>
+              </div>
+              <button class="modal-close" @click="showDeleteConfirm = false">×</button>
+            </div>
+            <div class="modal-body">
+              <p class="delete-warning-text">
+                This will permanently delete simulation <strong class="mono">{{ formatSimulationId(pendingDeleteProject?.simulation_id) }}</strong> and all associated data including agent profiles, configs, run logs, and reports.
+              </p>
+              <p class="delete-warning-note">This cannot be undone.</p>
+            </div>
+            <div class="modal-actions delete-actions">
+              <button class="modal-btn btn-cancel-delete" @click="showDeleteConfirm = false">Cancel</button>
+              <button class="modal-btn btn-confirm-delete" :disabled="isDeleting" @click="confirmDelete">
+                {{ isDeleting ? 'Deleting...' : '⚠ Delete Permanently' }}
+              </button>
+            </div>
+            <div v-if="deleteError" class="delete-error-msg">{{ deleteError }}</div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, onActivated, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { getSimulationHistory } from '../api/simulation'
+import { getSimulationHistory, deleteSimulation } from '../api/simulation'
 
 const router = useRouter()
 const route = useRoute()
@@ -211,6 +251,10 @@ const isExpanded = ref(true)
 const hoveringCard = ref(null)
 const historyContainer = ref(null)
 const selectedProject = ref(null)  // 当前选中的项目（用于弹窗）
+const showDeleteConfirm = ref(false)
+const pendingDeleteProject = ref(null)
+const isDeleting = ref(false)
+const deleteError = ref('')
 let observer = null
 let isAnimating = false  // 动画锁，防止闪烁
 let expandDebounceTimer = null  // 防抖定时器
@@ -417,6 +461,36 @@ const navigateToProject = (simulation) => {
 // Close modal
 const closeModal = () => {
   selectedProject.value = null
+}
+
+const promptDeleteSimulation = () => {
+  pendingDeleteProject.value = selectedProject.value
+  deleteError.value = ''
+  showDeleteConfirm.value = true
+}
+
+const confirmDelete = async () => {
+  if (!pendingDeleteProject.value?.simulation_id) return
+  isDeleting.value = true
+  deleteError.value = ''
+  try {
+    const res = await deleteSimulation(pendingDeleteProject.value.simulation_id)
+    if (res.success) {
+      // Remove from local list
+      projects.value = projects.value.filter(
+        p => p.simulation_id !== pendingDeleteProject.value.simulation_id
+      )
+      showDeleteConfirm.value = false
+      selectedProject.value = null
+      pendingDeleteProject.value = null
+    } else {
+      deleteError.value = res.error || 'Delete failed'
+    }
+  } catch (e) {
+    deleteError.value = e.message || 'Delete failed'
+  } finally {
+    isDeleting.value = false
+  }
 }
 
 // Navigate to graph build page (Project)
@@ -1162,6 +1236,33 @@ onUnmounted(() => {
   letter-spacing: 0.3px;
 }
 
+.modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--status-error);
+  background: transparent;
+  color: var(--status-error);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
 .modal-close {
   width: 32px;
   height: 32px;
@@ -1180,6 +1281,79 @@ onUnmounted(() => {
 .modal-close:hover {
   background: var(--bg-elevated);
   color: var(--text-primary);
+}
+
+/* Delete confirm modal */
+.delete-confirm-modal {
+  max-width: 480px;
+}
+
+.delete-warning-text {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.delete-warning-note {
+  font-size: 13px;
+  color: var(--status-error);
+  font-weight: 600;
+  margin: 0;
+}
+
+.delete-actions {
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid var(--border-subtle);
+  padding: 16px 32px;
+}
+
+.btn-cancel-delete {
+  background: transparent;
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel-delete:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.btn-confirm-delete {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid var(--status-error);
+  color: var(--status-error);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+}
+
+.btn-confirm-delete:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.22);
+}
+
+.btn-confirm-delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.delete-error-msg {
+  padding: 8px 32px 16px;
+  font-size: 12px;
+  color: var(--status-error);
+  font-family: var(--font-mono);
 }
 
 /* Modal body */

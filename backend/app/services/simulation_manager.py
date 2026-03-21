@@ -478,6 +478,19 @@ class SimulationManager:
         
         return simulations
     
+    def delete_simulation(self, simulation_id: str) -> bool:
+        """Delete simulation directory and remove from in-memory cache."""
+        import shutil
+        sim_dir = os.path.join(self.SIMULATION_DATA_DIR, simulation_id)
+        deleted = False
+        if os.path.exists(sim_dir) and os.path.isdir(sim_dir):
+            shutil.rmtree(sim_dir)
+            deleted = True
+        if simulation_id in self._simulations:
+            del self._simulations[simulation_id]
+            deleted = True
+        return deleted
+
     def get_profiles(self, simulation_id: str, platform: str = "reddit") -> List[Dict[str, Any]]:
         """获取模拟的Agent Profile"""
         state = self._load_simulation_state(simulation_id)

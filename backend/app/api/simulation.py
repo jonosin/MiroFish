@@ -982,6 +982,55 @@ def get_simulation_history():
         }), 500
 
 
+@simulation_bp.route('/<simulation_id>', methods=['DELETE'])
+def delete_simulation(simulation_id: str):
+    """
+    Delete a simulation and all associated data (report, profiles, config, logs).
+    """
+    import shutil
+    from ..services.report_agent import ReportAgent
+
+    try:
+        deleted_items = []
+        errors = []
+
+        # 1. Delete associated report (if any)
+        try:
+            report = ReportAgent.get_report_by_simulation(simulation_id)
+            if report:
+                if ReportAgent.delete_report(report.report_id):
+                    deleted_items.append(f"report:{report.report_id}")
+        except Exception as e:
+            errors.append(f"report cleanup: {str(e)}")
+
+        # 2. Delete simulation directory + remove from cache
+        manager = SimulationManager()
+        deleted = manager.delete_simulation(simulation_id)
+        if deleted:
+            deleted_items.append(f"simulation:{simulation_id}")
+
+        if not deleted_items and not errors:
+            return jsonify({
+                "success": False,
+                "error": f"Simulation {simulation_id} not found"
+            }), 404
+
+        return jsonify({
+            "success": True,
+            "simulation_id": simulation_id,
+            "deleted": deleted_items,
+            "errors": errors
+        })
+
+    except Exception as e:
+        logger.error(f"Delete simulation failed: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
+
 @simulation_bp.route('/<simulation_id>/profiles', methods=['GET'])
 def get_simulation_profiles(simulation_id: str):
     """
