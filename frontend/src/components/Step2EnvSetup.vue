@@ -636,14 +636,6 @@
     </button>
   </div>
 
-  <ConfirmModal
-    :visible="showPrepareConfirm"
-    title="Start Persona Creation"
-    message="This will generate agent personas for all entities using your LLM API. This may take several minutes and cannot be easily interrupted once started."
-    note="Tokens will be consumed. Only proceed if you intend to run a full simulation."
-    @confirm="confirmStartPrepare"
-    @cancel="emit('go-back')"
-  />
   </div>
 </template>
 
@@ -657,7 +649,6 @@ import {
   getSimulationConfigRealtime,
   cancelPrepare
 } from '../api/simulation'
-import ConfirmModal from './ConfirmModal.vue'
 
 const props = defineProps({
   simulationId: String,  // 从父组件传入
@@ -668,8 +659,7 @@ const props = defineProps({
 
 const emit = defineEmits(['go-back', 'next-step', 'add-log', 'update-status'])
 
-// Confirm modal state
-const showPrepareConfirm = ref(false)
+// Cancel state
 const isCancelling = ref(false)
 
 // State
@@ -1088,17 +1078,11 @@ watch(() => props.systemLogs?.length, () => {
 })
 
 onMounted(() => {
-  // Show confirm before auto-starting preparation
   if (props.simulationId) {
     addLog('Step2 Env Setup init')
-    showPrepareConfirm.value = true
+    startPrepareSimulation()
   }
 })
-
-const confirmStartPrepare = () => {
-  showPrepareConfirm.value = false
-  startPrepareSimulation()
-}
 
 const handleCancelPrepare = async () => {
   if (!props.simulationId || isCancelling.value) return

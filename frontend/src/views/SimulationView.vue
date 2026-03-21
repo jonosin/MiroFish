@@ -60,6 +60,15 @@
         />
       </div>
     </main>
+
+    <ConfirmModal
+      :visible="showSimStartConfirm"
+      title="Start Simulation"
+      message="This will launch dual-platform simulation rounds. Each agent action consumes LLM API tokens."
+      note="Tokens will be consumed every round. Only proceed if you're ready to run."
+      @confirm="confirmNextStep"
+      @cancel="showSimStartConfirm = false"
+    />
   </div>
 </template>
 
@@ -68,6 +77,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import GraphPanel from '../components/GraphPanel.vue'
 import Step2EnvSetup from '../components/Step2EnvSetup.vue'
+import ConfirmModal from '../components/ConfirmModal.vue'
 import { getProject, getGraphData } from '../api/graph'
 import { getSimulation, stopSimulation, getEnvStatus, closeSimulationEnv } from '../api/simulation'
 
@@ -81,6 +91,10 @@ const props = defineProps({
 
 // Layout State
 const viewMode = ref('split')
+
+// Confirm modal state for entering Step 3
+const showSimStartConfirm = ref(false)
+const pendingNextStepParams = ref(null)
 
 // Data State
 const currentSimulationId = ref(route.params.simulationId)
@@ -146,27 +160,31 @@ const handleGoBack = () => {
 }
 
 const handleNextStep = (params = {}) => {
+  // Show confirm before navigating to Step 3
+  pendingNextStepParams.value = params
+  showSimStartConfirm.value = true
+}
+
+const confirmNextStep = () => {
+  showSimStartConfirm.value = false
+  const params = pendingNextStepParams.value || {}
   addLog('Entering Step 3: Simulate')
 
-  // Log rounds configuration
   if (params.maxRounds) {
     addLog(`Custom max rounds: ${params.maxRounds}`)
   } else {
     addLog('Using auto-configured round count')
   }
 
-  // Build route params
   const routeParams = {
     name: 'SimulationRun',
     params: { simulationId: currentSimulationId.value }
   }
 
-  // Pass custom rounds via query param if set
   if (params.maxRounds) {
     routeParams.query = { maxRounds: params.maxRounds }
   }
 
-  // Navigate to Step 3 page
   router.push(routeParams)
 }
 

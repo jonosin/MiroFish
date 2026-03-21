@@ -292,14 +292,6 @@
     </div>
   </div>
 
-  <ConfirmModal
-    :visible="showStartConfirm"
-    title="Start Simulation"
-    message="This will launch dual-platform simulation rounds. Each agent action consumes LLM API tokens."
-    note="Tokens will be consumed every round. Only proceed if you're ready to run."
-    @confirm="() => { showStartConfirm = false; doStartSimulation() }"
-    @cancel="emit('go-back')"
-  />
 
   <ConfirmModal
     :visible="showReportConfirm"
@@ -339,8 +331,7 @@ const emit = defineEmits(['go-back', 'next-step', 'add-log', 'update-status'])
 
 const router = useRouter()
 
-// Confirm modal state
-const showStartConfirm = ref(false)
+// Confirm modal state (for report generation only)
 const showReportConfirm = ref(false)
 
 // State
@@ -722,7 +713,7 @@ watch(() => props.systemLogs?.length, () => {
 onMounted(() => {
   addLog('Step3 simulation initialized')
   if (props.simulationId) {
-    showStartConfirm.value = true
+    doStartSimulation()
   }
 })
 

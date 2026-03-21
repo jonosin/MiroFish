@@ -32,10 +32,12 @@ Simply:
 
 ## ✨ This Fork: Dark Trading Theme + Full English Translation
 
-This is a community fork with two key improvements:
+This is a community fork with multiple improvements:
 
 1. **Dark Trading Aesthetic** — Black background with orange/red accents (`#ff4500`) optimized for market analysis dashboards
 2. **100% English UI** — All 14 Vue components translated from Chinese to English for global accessibility
+3. **Safety Controls** — Confirmation modals before all token-consuming actions, with visible stop buttons for persona generation and simulation runs
+4. **Reliable History** — Fixed history cards display (IntersectionObserver threshold and default state)
 
 All core MiroFish simulation logic remains unchanged. Perfect for traders and market researchers.
 
@@ -92,6 +94,15 @@ All core MiroFish simulation logic remains unchanged. Perfect for traders and ma
 - **Dual LLM Slots** — Separate quality models for persona creation/reporting vs. simulation rounds (cost optimization)
 - **History Tracking** — Browse and replay previous simulations
 - **Agent Interaction** — Deep conversation with simulated agents via God's Eye
+
+---
+
+## 🛡️ Safety & Reliability (Recent Updates)
+
+- **Token Cost Protection** — All API-consuming actions (graph build, persona generation, simulation rounds, report generation) require explicit confirmation before execution
+- **Cancellable Operations** — Stop buttons for long-running persona creation and simulation rounds. Cancel immediately halts execution and cleans up resources
+- **Fixed History Display** — History cards now display correctly on the homepage (fixed IntersectionObserver threshold and default expanded state)
+- **Modal Gating** — Confirmation dialogs appear **before** navigation, ensuring nothing initializes until you explicitly confirm
 
 ---
 

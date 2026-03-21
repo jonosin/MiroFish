@@ -175,6 +175,15 @@
       </div>
     </div>
 
+    <ConfirmModal
+      :visible="showEnvSetupConfirm"
+      title="Enter Environment Setup"
+      message="This will create a simulation instance and begin persona generation using your LLM API. This may take several minutes."
+      note="Tokens will be consumed generating agent profiles. Only proceed if you intend to run a simulation."
+      @confirm="confirmEnterEnvSetup"
+      @cancel="showEnvSetupConfirm = false"
+    />
+
     <!-- Bottom Info / Logs -->
     <div class="system-logs">
       <div class="log-header">
@@ -195,6 +204,7 @@
 import { computed, ref, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { createSimulation } from '../api/simulation'
+import ConfirmModal from './ConfirmModal.vue'
 
 const router = useRouter()
 
@@ -212,14 +222,20 @@ defineEmits(['next-step'])
 const selectedOntologyItem = ref(null)
 const logContent = ref(null)
 const creatingSimulation = ref(false)
+const showEnvSetupConfirm = ref(false)
 
-// Enter env setup - create simulation and navigate
-const handleEnterEnvSetup = async () => {
+// Enter env setup - show confirm first
+const handleEnterEnvSetup = () => {
   if (!props.projectData?.project_id || !props.projectData?.graph_id) {
     console.error('Missing project or graph information')
     return
   }
+  showEnvSetupConfirm.value = true
+}
 
+// Actually create simulation and navigate after confirmation
+const confirmEnterEnvSetup = async () => {
+  showEnvSetupConfirm.value = false
   creatingSimulation.value = true
 
   try {
@@ -231,7 +247,6 @@ const handleEnterEnvSetup = async () => {
     })
 
     if (res.success && res.data?.simulation_id) {
-      // Navigate to simulation page
       router.push({
         name: 'Simulation',
         params: { simulationId: res.data.simulation_id }
