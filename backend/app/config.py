@@ -29,9 +29,9 @@ class Config:
     
     # LLM配置（统一使用OpenAI格式）
     LLM_API_KEY = os.environ.get('LLM_API_KEY')
-    LLM_BASE_URL = os.environ.get('LLM_BASE_URL', 'https://api.openai.com/v1')
-    LLM_MODEL_NAME = os.environ.get('LLM_MODEL_NAME', 'gpt-4o-mini')
-    LLM_QUALITY_MODEL_NAME = os.environ.get('LLM_QUALITY_MODEL_NAME', os.environ.get('LLM_MODEL_NAME', 'gpt-4o-mini'))
+    LLM_BASE_URL = os.environ.get('LLM_BASE_URL', 'https://dashscope.aliyuncs.com/compatible-mode/v1')
+    LLM_MODEL_NAME = os.environ.get('LLM_MODEL_NAME', 'qwen3.5-flash')
+    LLM_QUALITY_MODEL_NAME = os.environ.get('LLM_QUALITY_MODEL_NAME', os.environ.get('LLM_MODEL_NAME', 'qwen3.5-plus'))
     
     # Zep配置
     ZEP_API_KEY = os.environ.get('ZEP_API_KEY')
