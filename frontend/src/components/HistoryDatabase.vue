@@ -39,7 +39,8 @@
               title="Graph Build"
             >◇</span>
             <span
-              class="status-icon available"
+              class="status-icon"
+              :class="{ available: project.profiles_count > 0, unavailable: !project.profiles_count }"
               title="Env Setup"
             >◈</span>
             <span
@@ -92,6 +93,11 @@
           <span class="card-progress" :class="getProgressClass(project)">
             <span class="status-dot">●</span> {{ formatRounds(project) }}
           </span>
+        </div>
+
+        <!-- Env status badge -->
+        <div class="card-env-badge" :class="project.profiles_count > 0 ? 'env-ready' : 'env-not-set'">
+          {{ project.profiles_count > 0 ? 'Env Ready' : 'Env Not Set Up' }}
         </div>
         
         <!-- Bottom decoration line (expands on hover) -->
@@ -968,6 +974,27 @@ onUnmounted(() => {
 .card-footer .card-progress.error { color: var(--status-error); }
 .card-footer .card-progress.preparing { color: var(--accent); }
 .card-footer .card-progress.ready { color: var(--status-success); }
+
+/* Env status badge */
+.card-env-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  margin-top: 6px;
+  display: inline-block;
+}
+.card-env-badge.env-ready {
+  color: var(--status-success);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.card-env-badge.env-not-set {
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+}
 
 /* Bottom accent line */
 .card-bottom-line {

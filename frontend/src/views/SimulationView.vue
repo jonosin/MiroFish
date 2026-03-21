@@ -49,6 +49,7 @@
       <!-- Right Panel: Step2 Env Setup -->
       <div class="panel-wrapper right" :style="rightPanelStyle">
         <Step2EnvSetup
+          ref="step2Ref"
           :simulationId="currentSimulationId"
           :projectData="projectData"
           :graphData="graphData"
@@ -69,11 +70,20 @@
       @confirm="confirmNextStep"
       @cancel="showSimStartConfirm = false"
     />
+
+    <ConfirmModal
+      :visible="showEnvSetupConfirm"
+      title="Start Environment Setup"
+      message="This will generate agent personas and simulation config using LLM API calls."
+      note="Token usage will begin immediately. Only proceed if you're ready to set up this environment."
+      @confirm="confirmEnvSetup"
+      @cancel="cancelEnvSetup"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import GraphPanel from '../components/GraphPanel.vue'
 import Step2EnvSetup from '../components/Step2EnvSetup.vue'
@@ -91,6 +101,12 @@ const props = defineProps({
 
 // Layout State
 const viewMode = ref('split')
+
+// Step2 component ref for calling triggerStart
+const step2Ref = ref(null)
+
+// Confirm modal state for entering env setup (Step 2)
+const showEnvSetupConfirm = ref(false)
 
 // Confirm modal state for entering Step 3
 const showSimStartConfirm = ref(false)
@@ -159,6 +175,17 @@ const handleGoBack = () => {
   } else {
     router.push('/')
   }
+}
+
+const confirmEnvSetup = () => {
+  showEnvSetupConfirm.value = false
+  addLog('Confirmed — starting env setup')
+  step2Ref.value?.triggerStart()
+}
+
+const cancelEnvSetup = () => {
+  showEnvSetupConfirm.value = false
+  handleGoBack()
 }
 
 const handleNextStep = (params = {}) => {
@@ -276,6 +303,18 @@ const loadSimulationData = async () => {
             await loadGraph(projRes.data.graph_id)
           }
         }
+      }
+
+      // Decide whether to auto-start or show confirm modal
+      const envAlreadySetup = simData.profiles_count > 0 && simData.config_generated === true
+      await nextTick()
+      if (envAlreadySetup) {
+        // Env already set up — just load data (triggerStart handles polling of existing state)
+        addLog('Env already set up — loading existing data')
+        step2Ref.value?.triggerStart()
+      } else {
+        // Env not set up — show confirm before starting
+        showEnvSetupConfirm.value = true
       }
     } else {
       addLog(`Failed to load simulation data: ${simRes.error || 'Unknown error'}`)

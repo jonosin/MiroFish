@@ -630,9 +630,16 @@
     </div>
 
   <!-- Cancel preparation button (visible while running) -->
-  <div v-if="phase === 1 || phase === 2" class="cancel-prepare-bar">
+  <div v-if="(phase === 1 || phase === 2) && !isStopped" class="cancel-prepare-bar">
     <button class="cancel-prepare-btn" :disabled="isCancelling" @click="handleCancelPrepare">
       {{ isCancelling ? 'Cancelling...' : '⏹ Stop Persona Generation' }}
+    </button>
+  </div>
+
+  <!-- Resume button (visible after stopping) -->
+  <div v-if="isStopped" class="cancel-prepare-bar">
+    <button class="resume-prepare-btn" @click="triggerStart">
+      ▶ Resume Persona Generation
     </button>
   </div>
 
@@ -661,6 +668,7 @@ const emit = defineEmits(['go-back', 'next-step', 'add-log', 'update-status'])
 
 // Cancel state
 const isCancelling = ref(false)
+const isStopped = ref(false)
 
 // State
 const phase = ref(1) // 1: 生成人设, 2: 生成配置, 3: 完成 (0 skipped — simulation already created before mounting)
@@ -1077,11 +1085,17 @@ watch(() => props.systemLogs?.length, () => {
   })
 })
 
-onMounted(() => {
+const triggerStart = () => {
+  isStopped.value = false
   if (props.simulationId) {
-    addLog('Step2 Env Setup init')
     startPrepareSimulation()
   }
+}
+
+defineExpose({ triggerStart })
+
+onMounted(() => {
+  addLog('Step2 Env Setup init')
 })
 
 const handleCancelPrepare = async () => {
@@ -1098,6 +1112,7 @@ const handleCancelPrepare = async () => {
     stopProfilesPolling()
     stopConfigPolling()
     phase.value = 1 // Reset back to idle (step 1 still complete, step 2 stopped)
+    isStopped.value = true
     emit('update-status', 'stopped')
     addLog('✗ Persona generation stopped')
   }
@@ -1131,6 +1146,22 @@ onUnmounted(() => {
 
 .cancel-prepare-btn:hover:not(:disabled) {
   background: rgba(239, 68, 68, 0.1);
+}
+
+.resume-prepare-btn {
+  background: transparent;
+  border: 1px solid var(--status-success);
+  color: var(--status-success);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resume-prepare-btn:hover {
+  background: rgba(16, 185, 129, 0.1);
 }
 
 .cancel-prepare-btn:disabled {
