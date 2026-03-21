@@ -204,12 +204,22 @@
       <HistoryDatabase />
     </div>
   </div>
+
+  <ConfirmModal
+    :visible="showLaunchConfirm"
+    title="Launch Engine"
+    message="This will run Ontology Generation + Graph Build using your LLM API."
+    note="Tokens will be consumed. Make sure your files and prompt are correct."
+    @confirm="confirmLaunch"
+    @cancel="showLaunchConfirm = false"
+  />
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
+import ConfirmModal from '../components/ConfirmModal.vue'
 
 const router = useRouter()
 
@@ -288,19 +298,21 @@ const scrollToBottom = () => {
   })
 }
 
-// Start simulation — navigate immediately; API call happens on Process page
+// Confirm modal state
+const showLaunchConfirm = ref(false)
+
+// Show confirm before launching
 const startSimulation = () => {
   if (!canSubmit.value || loading.value) return
+  showLaunchConfirm.value = true
+}
 
-  // Store pending upload data
+// Actually launch after user confirms
+const confirmLaunch = () => {
+  showLaunchConfirm.value = false
   import('../store/pendingUpload.js').then(({ setPendingUpload }) => {
     setPendingUpload(files.value, formData.value.simulationRequirement)
-
-    // Navigate to Process page immediately (special marker for new project)
-    router.push({
-      name: 'Process',
-      params: { projectId: 'new' }
-    })
+    router.push({ name: 'Process', params: { projectId: 'new' } })
   })
 }
 </script>

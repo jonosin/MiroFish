@@ -1695,6 +1695,27 @@ def stop_simulation():
         }), 500
 
 
+# ============== Cancel prepare ==============
+
+@simulation_bp.route('/cancel-prepare', methods=['POST'])
+def cancel_prepare():
+    """
+    Cancel an ongoing persona/prepare task.
+    Sets a flag that the profile generation loop checks between iterations.
+    """
+    try:
+        from ..services.oasis_profile_generator import request_prepare_cancel
+        data = request.get_json()
+        simulation_id = data.get('simulation_id')
+        if not simulation_id:
+            return jsonify({'success': False, 'error': 'simulation_id required'}), 400
+
+        request_prepare_cancel(simulation_id)
+        return jsonify({'success': True, 'data': {'simulation_id': simulation_id, 'cancelled': True}})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 # ============== 实时状态监控接口 ==============
 
 @simulation_bp.route('/<simulation_id>/run-status', methods=['GET'])

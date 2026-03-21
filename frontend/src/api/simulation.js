@@ -169,6 +169,14 @@ export const getEnvStatus = (data) => {
 }
 
 /**
+ * Cancel ongoing persona/prepare task
+ * @param {Object} data - { simulation_id }
+ */
+export const cancelPrepare = (data) => {
+  return service.post('/api/simulation/cancel-prepare', data)
+}
+
+/**
  * 批量采访 Agent
  * @param {Object} data - { simulation_id, interviews: [{ agent_id, prompt }] }
  */

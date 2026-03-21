@@ -24,6 +24,21 @@ from .zep_entity_reader import EntityNode, ZepEntityReader
 
 logger = get_logger('mirofish.oasis_profile')
 
+# Cancellation flags keyed by simulation_id
+_prepare_cancel_flags: Dict[str, bool] = {}
+
+
+def request_prepare_cancel(simulation_id: str):
+    _prepare_cancel_flags[simulation_id] = True
+
+
+def is_prepare_cancelled(simulation_id: str) -> bool:
+    return _prepare_cancel_flags.get(simulation_id, False)
+
+
+def clear_prepare_cancel(simulation_id: str):
+    _prepare_cancel_flags.pop(simulation_id, None)
+
 
 @dataclass
 class OasisAgentProfile:
@@ -855,7 +870,8 @@ class OasisProfileGenerator:
         graph_id: Optional[str] = None,
         parallel_count: int = 5,
         realtime_output_path: Optional[str] = None,
-        output_platform: str = "reddit"
+        output_platform: str = "reddit",
+        simulation_id: Optional[str] = None
     ) -> List[OasisAgentProfile]:
         """
         批量从实体生成Agent Profile（支持并行生成）
@@ -959,10 +975,18 @@ class OasisProfileGenerator:
             }
             
             # 收集结果
+            cancelled = False
             for future in concurrent.futures.as_completed(future_to_entity):
+                # Check cancellation flag between each completed persona
+                if simulation_id and is_prepare_cancelled(simulation_id):
+                    logger.info(f"Persona generation cancelled for {simulation_id} — stopping early")
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    cancelled = True
+                    break
+
                 idx, entity = future_to_entity[future]
                 entity_type = entity.get_entity_type() or "Entity"
-                
+
                 try:
                     result_idx, profile, error = future.result()
                     profiles[result_idx] = profile

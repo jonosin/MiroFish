@@ -628,18 +628,36 @@
         </div>
       </div>
     </div>
+
+  <!-- Cancel preparation button (visible while running) -->
+  <div v-if="phase === 1 || phase === 2" class="cancel-prepare-bar">
+    <button class="cancel-prepare-btn" :disabled="isCancelling" @click="handleCancelPrepare">
+      {{ isCancelling ? 'Cancelling...' : '⏹ Stop Persona Generation' }}
+    </button>
+  </div>
+
+  <ConfirmModal
+    :visible="showPrepareConfirm"
+    title="Start Persona Creation"
+    message="This will generate agent personas for all entities using your LLM API. This may take several minutes and cannot be easily interrupted once started."
+    note="Tokens will be consumed. Only proceed if you intend to run a full simulation."
+    @confirm="confirmStartPrepare"
+    @cancel="showPrepareConfirm = false"
+  />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
-import { 
-  prepareSimulation, 
-  getPrepareStatus, 
+import {
+  prepareSimulation,
+  getPrepareStatus,
   getSimulationProfilesRealtime,
   getSimulationConfig,
-  getSimulationConfigRealtime 
+  getSimulationConfigRealtime,
+  cancelPrepare
 } from '../api/simulation'
+import ConfirmModal from './ConfirmModal.vue'
 
 const props = defineProps({
   simulationId: String,  // 从父组件传入
@@ -649,6 +667,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['go-back', 'next-step', 'add-log', 'update-status'])
+
+// Confirm modal state
+const showPrepareConfirm = ref(false)
+const isCancelling = ref(false)
 
 // State
 const phase = ref(0) // 0: 初始化, 1: 生成人设, 2: 生成配置, 3: 完成
@@ -1066,12 +1088,30 @@ watch(() => props.systemLogs?.length, () => {
 })
 
 onMounted(() => {
-  // Auto-start preparation flow
+  // Show confirm before auto-starting preparation
   if (props.simulationId) {
     addLog('Step2 Env Setup init')
-    startPrepareSimulation()
+    showPrepareConfirm.value = true
   }
 })
+
+const confirmStartPrepare = () => {
+  showPrepareConfirm.value = false
+  startPrepareSimulation()
+}
+
+const handleCancelPrepare = async () => {
+  if (!props.simulationId || isCancelling.value) return
+  isCancelling.value = true
+  try {
+    await cancelPrepare({ simulation_id: props.simulationId })
+    addLog('Cancellation requested — stopping persona generation...')
+  } catch (e) {
+    addLog(`Cancel request failed: ${e.message}`)
+  } finally {
+    isCancelling.value = false
+  }
+}
 
 onUnmounted(() => {
   stopPolling()
@@ -1081,6 +1121,33 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.cancel-prepare-bar {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
+}
+
+.cancel-prepare-btn {
+  background: transparent;
+  border: 1px solid var(--status-error);
+  color: var(--status-error);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-prepare-btn:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.cancel-prepare-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .env-setup-panel {
   height: 100%;
   display: flex;

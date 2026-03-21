@@ -91,7 +91,15 @@
       </div>
 
       <div class="action-controls">
-        <button 
+        <button
+          v-if="phase === 1"
+          class="action-btn stop"
+          :disabled="isStopping"
+          @click="handleStopSimulation"
+        >
+          {{ isStopping ? 'Stopping...' : '⏹ Stop Simulation' }}
+        </button>
+        <button
           class="action-btn primary"
           :disabled="phase !== 2 || isGeneratingReport"
           @click="handleNextStep"
@@ -283,18 +291,37 @@
       </div>
     </div>
   </div>
+
+  <ConfirmModal
+    :visible="showStartConfirm"
+    title="Start Simulation"
+    message="This will launch dual-platform simulation rounds. Each agent action consumes LLM API tokens."
+    note="Tokens will be consumed every round. Only proceed if you're ready to run."
+    @confirm="() => { showStartConfirm = false; doStartSimulation() }"
+    @cancel="showStartConfirm = false"
+  />
+
+  <ConfirmModal
+    :visible="showReportConfirm"
+    title="Generate Report"
+    message="Report generation uses your LLM API to deeply analyze the simulation results."
+    note="Tokens will be consumed. The report cannot be paused once started."
+    @confirm="() => { showReportConfirm = false; doGenerateReport() }"
+    @cancel="showReportConfirm = false"
+  />
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { 
-  startSimulation, 
+import {
+  startSimulation,
   stopSimulation,
-  getRunStatus, 
+  getRunStatus,
   getRunStatusDetail
 } from '../api/simulation'
 import { generateReport } from '../api/report'
+import ConfirmModal from './ConfirmModal.vue'
 
 const props = defineProps({
   simulationId: String,
@@ -311,6 +338,10 @@ const props = defineProps({
 const emit = defineEmits(['go-back', 'next-step', 'add-log', 'update-status'])
 
 const router = useRouter()
+
+// Confirm modal state
+const showStartConfirm = ref(false)
+const showReportConfirm = ref(false)
 
 // State
 const isGeneratingReport = ref(false)
@@ -637,7 +668,12 @@ const formatActionTime = (timestamp) => {
   }
 }
 
-const handleNextStep = async () => {
+const handleNextStep = () => {
+  if (!props.simulationId || isGeneratingReport.value) return
+  showReportConfirm.value = true
+}
+
+const doGenerateReport = async () => {
   if (!props.simulationId) {
     addLog('Error: missing simulationId')
     return
@@ -686,7 +722,7 @@ watch(() => props.systemLogs?.length, () => {
 onMounted(() => {
   addLog('Step3 simulation initialized')
   if (props.simulationId) {
-    doStartSimulation()
+    showStartConfirm.value = true
   }
 })
 
@@ -891,6 +927,16 @@ onUnmounted(() => {
 
 .action-btn.primary:hover:not(:disabled) {
   opacity: 0.85;
+}
+
+.action-btn.stop {
+  background: transparent;
+  border-color: var(--status-error);
+  color: var(--status-error);
+}
+
+.action-btn.stop:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .action-btn:disabled {
