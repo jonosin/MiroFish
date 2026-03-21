@@ -663,7 +663,7 @@ const emit = defineEmits(['go-back', 'next-step', 'add-log', 'update-status'])
 const isCancelling = ref(false)
 
 // State
-const phase = ref(0) // 0: 初始化, 1: 生成人设, 2: 生成配置, 3: 完成
+const phase = ref(1) // 1: 生成人设, 2: 生成配置, 3: 完成 (0 skipped — simulation already created before mounting)
 const taskId = ref(null)
 const prepareProgress = ref(0)
 const currentStage = ref('')
@@ -1094,6 +1094,12 @@ const handleCancelPrepare = async () => {
     addLog(`Cancel request failed: ${e.message}`)
   } finally {
     isCancelling.value = false
+    stopPolling()
+    stopProfilesPolling()
+    stopConfigPolling()
+    phase.value = 1 // Reset back to idle (step 1 still complete, step 2 stopped)
+    emit('update-status', 'stopped')
+    addLog('✗ Persona generation stopped')
   }
 }
 

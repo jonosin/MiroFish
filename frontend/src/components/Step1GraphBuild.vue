@@ -156,7 +156,7 @@
             <span class="step-title">Build Complete</span>
           </div>
           <div class="step-status">
-            <span v-if="currentPhase >= 2" class="badge accent">Active</span>
+            <span v-if="currentPhase >= 2" class="badge ready">Ready</span>
           </div>
         </div>
         
@@ -366,7 +366,7 @@ watch(() => props.systemLogs.length, () => {
 
 .badge.success { background: rgba(34, 197, 94, 0.15); color: var(--status-success); }
 .badge.processing { background: var(--accent); color: #fff; }
-.badge.accent { background: var(--accent); color: #fff; }
+.badge.ready { background: rgba(34, 197, 94, 0.15); color: var(--status-success); }
 .badge.pending { background: var(--bg-elevated); color: var(--text-muted); }
 
 .api-note {

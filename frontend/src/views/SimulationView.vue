@@ -102,7 +102,7 @@ const projectData = ref(null)
 const graphData = ref(null)
 const graphLoading = ref(false)
 const systemLogs = ref([])
-const currentStatus = ref('processing') // processing | completed | error
+const currentStatus = ref('idle') // idle | processing | stopped | completed | error
 
 // --- Computed Layout Styles ---
 const leftPanelStyle = computed(() => {
@@ -125,7 +125,9 @@ const statusClass = computed(() => {
 const statusText = computed(() => {
   if (currentStatus.value === 'error') return 'Error'
   if (currentStatus.value === 'completed') return 'Ready'
-  return 'Preparing'
+  if (currentStatus.value === 'processing') return 'Preparing'
+  if (currentStatus.value === 'stopped') return 'Stopped'
+  return 'Idle'
 })
 
 // --- Helpers ---
@@ -425,8 +427,10 @@ onMounted(async () => {
   background: var(--text-muted);
 }
 
+.status-indicator.idle .dot { background: var(--text-muted); }
 .status-indicator.processing .dot { background: var(--status-processing); animation: pulse 1s infinite; }
 .status-indicator.completed .dot { background: var(--status-success); }
+.status-indicator.stopped .dot { background: var(--status-error); }
 .status-indicator.error .dot { background: var(--status-error); }
 
 @keyframes pulse { 50% { opacity: 0.5; } }
