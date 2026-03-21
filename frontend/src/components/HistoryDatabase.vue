@@ -288,21 +288,21 @@ const getCardStyle = (index) => {
   }
 }
 
-// Get style class based on round progress
+// Get style class based on actual simulation status
 const getProgressClass = (simulation) => {
+  const status = simulation.status || ''
+  const runnerStatus = simulation.runner_status || ''
   const current = simulation.current_round || 0
   const total = simulation.total_rounds || 0
 
-  if (total === 0 || current === 0) {
-    // Not started
-    return 'not-started'
-  } else if (current >= total) {
-    // Complete
-    return 'completed'
-  } else {
-    // In progress
-    return 'in-progress'
-  }
+  if (status === 'error') return 'error'
+  if (status === 'stopped' || runnerStatus === 'stopped') return 'stopped'
+  if (status === 'preparing') return 'preparing'
+  if (status === 'created') return 'not-started'
+  if (total > 0 && current >= total && (status === 'completed' || runnerStatus === 'completed')) return 'completed'
+  if (current > 0 && current < total) return 'in-progress'
+  if (total === 0 && status === 'ready') return 'ready'
+  return 'not-started'
 }
 
 // Format date (show date part only)
@@ -349,12 +349,24 @@ const formatSimulationId = (simulationId) => {
   return `SIM_${prefix.toUpperCase()}`
 }
 
-// Format rounds display (current/total)
+// Format rounds display based on actual status
 const formatRounds = (simulation) => {
+  const status = simulation.status || ''
+  const runnerStatus = simulation.runner_status || ''
   const current = simulation.current_round || 0
   const total = simulation.total_rounds || 0
-  if (total === 0) return 'Not started'
-  return `${current}/${total} rounds`
+
+  if (status === 'error') return 'Error'
+  if (status === 'stopped' || runnerStatus === 'stopped') {
+    if (total > 0) return `Stopped (${current}/${total})`
+    return 'Stopped'
+  }
+  if (status === 'preparing') return 'Preparing...'
+  if (status === 'created') return 'Not started'
+  if (total > 0 && current >= total) return `${current}/${total} rounds`
+  if (total > 0) return `${current}/${total} rounds`
+  if (status === 'ready') return 'Ready'
+  return 'Not started'
 }
 
 // Get file type (for styling)
@@ -746,6 +758,10 @@ onUnmounted(() => {
 .card-progress.completed { color: var(--status-success); }
 .card-progress.in-progress { color: var(--accent); }
 .card-progress.not-started { color: var(--text-muted); }
+.card-progress.stopped { color: var(--status-error); }
+.card-progress.error { color: var(--status-error); }
+.card-progress.preparing { color: var(--accent); }
+.card-progress.ready { color: var(--status-success); }
 .card-status.pending { color: var(--text-muted); }
 
 /* Files list area */
@@ -948,6 +964,10 @@ onUnmounted(() => {
 .card-footer .card-progress.completed { color: var(--status-success); }
 .card-footer .card-progress.in-progress { color: var(--accent); }
 .card-footer .card-progress.not-started { color: var(--text-muted); }
+.card-footer .card-progress.stopped { color: var(--status-error); }
+.card-footer .card-progress.error { color: var(--status-error); }
+.card-footer .card-progress.preparing { color: var(--accent); }
+.card-footer .card-progress.ready { color: var(--status-success); }
 
 /* Bottom accent line */
 .card-bottom-line {
@@ -1103,6 +1123,10 @@ onUnmounted(() => {
 .modal-progress.completed { color: var(--status-success); background: rgba(34, 197, 94, 0.1); }
 .modal-progress.in-progress { color: var(--accent); background: rgba(255, 69, 0, 0.1); }
 .modal-progress.not-started { color: var(--text-muted); background: var(--bg-elevated); }
+.modal-progress.stopped { color: var(--status-error); background: rgba(239, 68, 68, 0.1); }
+.modal-progress.error { color: var(--status-error); background: rgba(239, 68, 68, 0.1); }
+.modal-progress.preparing { color: var(--accent); background: rgba(255, 69, 0, 0.1); }
+.modal-progress.ready { color: var(--status-success); background: rgba(34, 197, 94, 0.1); }
 
 .modal-create-time {
   font-family: var(--font-mono);

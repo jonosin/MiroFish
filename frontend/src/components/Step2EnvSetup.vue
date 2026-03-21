@@ -426,7 +426,7 @@
             <span class="step-title">Ready</span>
           </div>
           <div class="step-status">
-            <span v-if="phase >= 4" class="badge processing">In Progress</span>
+            <span v-if="phase >= 4" class="badge success">Ready</span>
             <span v-else class="badge pending">Waiting</span>
           </div>
         </div>
