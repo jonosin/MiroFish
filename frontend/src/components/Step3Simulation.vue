@@ -298,7 +298,7 @@
     message="This will launch dual-platform simulation rounds. Each agent action consumes LLM API tokens."
     note="Tokens will be consumed every round. Only proceed if you're ready to run."
     @confirm="() => { showStartConfirm = false; doStartSimulation() }"
-    @cancel="showStartConfirm = false"
+    @cancel="emit('go-back')"
   />
 
   <ConfirmModal

@@ -642,7 +642,7 @@
     message="This will generate agent personas for all entities using your LLM API. This may take several minutes and cannot be easily interrupted once started."
     note="Tokens will be consumed. Only proceed if you intend to run a full simulation."
     @confirm="confirmStartPrepare"
-    @cancel="showPrepareConfirm = false"
+    @cancel="emit('go-back')"
   />
   </div>
 </template>
