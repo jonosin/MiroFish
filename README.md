@@ -30,16 +30,23 @@ Simply:
 
 ---
 
-## ✨ This Fork: Dark Trading Theme + Full English Translation
+## ✨ Extended-Safety Focus
 
-This is a community fork with multiple improvements:
+This fork prioritizes **safety and reliability** to prevent accidental token consumption and enable robust session management:
 
-1. **Dark Trading Aesthetic** — Black background with orange/red accents (`#ff4500`) optimized for market analysis dashboards
-2. **100% English UI** — All 14 Vue components translated from Chinese to English for global accessibility
-3. **Safety Controls** — Confirmation modals before all token-consuming actions, with visible stop buttons for persona generation and simulation runs
-4. **Reliable History** — Fixed history cards display (IntersectionObserver threshold and default state)
+### Core Safety Improvements
+1. **Confirmation Modals at Navigation Level** — All token-consuming actions (env setup, simulation, report generation) require explicit confirmation **before** component initialization. Prevents the accidental initialization bug.
+2. **History-Aware Flows** — Navigating from History to an unset-up simulation shows cost estimates before proceeding. Auto-skip confirm if simulation already prepared.
+3. **Cancellation & Resume** — Stop persona generation mid-way and resume later without re-confirming. Graceful cleanup and partial progress preservation.
+4. **Accurate Status Tracking** — History cards display true simulation state (Ready, Stopped, Preparing, etc.) with progress counts and env setup status.
+5. **Stale Simulation Cleanup** — One-click deletion with cascade cleanup of all associated data (profiles, configs, reports, logs).
 
-All core MiroFish simulation logic remains unchanged. Perfect for traders and market researchers.
+### Secondary Improvements
+- **Dark Theme UI** — Black background with orange accents (`#ff4500`) for better readability and reduced eye strain
+- **Full English UI** — All menus and labels in English for global accessibility
+- **Reliable History Display** — Fixed IntersectionObserver animations and state management
+
+All core MiroFish simulation logic remains unchanged. Optimized for researchers who need reliable, auditable multi-agent simulations.
 
 ---
 
